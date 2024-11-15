@@ -21,7 +21,7 @@ namespace MMDarkness.Editor
             var timeInfoInterval = 1000000f;
             var timeInfoHighMod = timeInfoInterval;
             var lowMod = 0.01f;
-            var modulos = new float[]
+            var modulos = new[]
                 { 0.1f, 0.5f, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 250000, 500000 }; //... O.o
             for (var i = 0; i < modulos.Length; i++)
             {
@@ -36,7 +36,7 @@ namespace MMDarkness.Editor
             }
 
             var doFrames = Prefs.timeStepMode == Prefs.TimeStepMode.Frames;
-            var timeStep = doFrames ? (1f / Prefs.frameRate) : lowMod;
+            var timeStep = doFrames ? 1f / Prefs.frameRate : lowMod;
 
             var timeInfoStart = Mathf.FloorToInt(asset.ViewTimeMin / timeInfoInterval) * timeInfoInterval;
             var timeInfoEnd = Mathf.CeilToInt(asset.ViewTimeMax / timeInfoInterval) * timeInfoInterval;
@@ -49,7 +49,6 @@ namespace MMDarkness.Editor
             {
                 //步长间隔
                 if (G.CenterRect.width / (asset.ViewTime / timeStep) > 6)
-                {
                     for (var i = timeInfoStart; i <= timeInfoEnd; i += timeStep)
                     {
                         var posX = asset.TimeToPos(i);
@@ -58,7 +57,6 @@ namespace MMDarkness.Editor
                         GUI.DrawTexture(frameRect, Styles.WhiteTexture);
                         GUI.color = Color.white;
                     }
-                }
 
                 //时间间隔
                 for (var i = timeInfoStart; i <= timeInfoEnd; i += timeInfoInterval)

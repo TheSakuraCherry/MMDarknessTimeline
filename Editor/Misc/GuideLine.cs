@@ -9,8 +9,8 @@ namespace MMDarkness.Editor
 
         public GuideLine(float time, Color color)
         {
-            this.Time = time;
-            this.Color = color;
+            Time = time;
+            Color = color;
         }
     }
 }

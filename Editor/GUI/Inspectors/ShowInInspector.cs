@@ -10,7 +10,7 @@ namespace MMDarkness.Editor
     {
         private static Rect m_rect;
         private static bool m_willResample;
-        private static Dictionary<IData, InspectorsBase> m_directableEditors = new();
+        private static readonly Dictionary<IData, InspectorsBase> m_directableEditors = new();
         private static InspectorsBase m_currentDirectableEditor;
         private static ScriptableObject m_selection;
         private bool m_graphFoldout = true;
@@ -64,9 +64,7 @@ namespace MMDarkness.Editor
             if (m_graphFoldout)
             {
                 if (!m_directableEditors.TryGetValue(graphAsset, out var drawer))
-                {
                     m_directableEditors[graphAsset] = drawer = EditorInspectorFactory.GetInspector(graphAsset);
-                }
 
                 drawer?.OnInspectorGUI();
             }
@@ -78,14 +76,13 @@ namespace MMDarkness.Editor
             if (!m_selection || !(m_selection is IData data)) return;
 
             if (!m_directableEditors.TryGetValue(data, out var drawer))
-            {
                 m_directableEditors[data] = drawer = EditorInspectorFactory.GetInspector(data);
-            }
 
             if (m_currentDirectableEditor != drawer)
             {
                 var enableMethod = drawer.GetType().GetMethod("OnEnable",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
+                    BindingFlags.FlattenHierarchy);
                 enableMethod?.Invoke(drawer, null);
 
                 m_currentDirectableEditor = drawer;
@@ -103,7 +100,7 @@ namespace MMDarkness.Editor
 
             var type = m_selection.GetType();
             var nameAttribute = type.GetCustomAttribute<NameAttribute>();
-            string nameInfo = nameAttribute != null ? nameAttribute.Name : type.Name.SplitCamelCase();
+            var nameInfo = nameAttribute != null ? nameAttribute.Name : type.Name.SplitCamelCase();
 
             GUI.color = new Color(0, 0, 0, 0.2f);
             GUILayout.BeginHorizontal(Styles.HeaderBoxStyle);
@@ -112,12 +109,9 @@ namespace MMDarkness.Editor
             GUILayout.EndHorizontal();
 
             var description = type.GetCustomAttribute<DescriptionAttribute>();
-            string desc = description?.Description ?? string.Empty;
+            var desc = description?.Description ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(desc))
-            {
-                EditorGUILayout.HelpBox(desc, MessageType.None);
-            }
+            if (!string.IsNullOrEmpty(desc)) EditorGUILayout.HelpBox(desc, MessageType.None);
 
             GUILayout.Space(2);
         }

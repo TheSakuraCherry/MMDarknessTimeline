@@ -1,19 +1,15 @@
-﻿using System;
+﻿#if USE_FIXED_POINT
+using CMath = Box2DSharp.Common.FMath;
+using CFloat = Box2DSharp.Common.FP;
+#else
+using CFloat = System.Single;
+#endif
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if USE_FIXED_POINT
-using CMath = Box2DSharp.Common.FMath;
-using CFloat = Box2DSharp.Common.FP;
-
-#else
-using CMath = System.Math;
-using CFloat = System.Single;
-#endif
-
 namespace MMDarkness
 {
-    
     public interface ITimelineGraph : IDisposable
     {
         IEnumerable<IDirectable> Children { get; }

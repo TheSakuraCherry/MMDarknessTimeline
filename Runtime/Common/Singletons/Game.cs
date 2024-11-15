@@ -5,24 +5,20 @@ namespace MMDarkness
 {
     public static class Game
     {
-        private static readonly Dictionary<Type, ISingleton> singletonTypes = new Dictionary<Type, ISingleton>();
-        private static readonly Queue<ISingleton> singletons = new Queue<ISingleton>();
+        private static readonly Dictionary<Type, ISingleton> singletonTypes = new();
+        private static readonly Queue<ISingleton> singletons = new();
 
         public static IReadOnlyDictionary<Type, ISingleton> SingleTypes => singletonTypes;
 
         private static ISingleton GetSingleton_Internal(Type singletonType)
         {
             if (!singletonTypes.TryGetValue(singletonType, out var singleton))
-            {
                 foreach (var pair in singletonTypes)
-                {
                     if (pair.Value.GetType().IsAssignableFrom(singletonType))
                     {
                         singleton = pair.Value;
                         break;
                     }
-                }
-            }
 
             return singleton;
         }
@@ -40,7 +36,7 @@ namespace MMDarkness
 
         public static void FixedUpdate()
         {
-            int count = singletons.Count;
+            var count = singletons.Count;
             while (count-- > 0)
             {
                 var singleton = singletons.Dequeue();
@@ -58,7 +54,7 @@ namespace MMDarkness
 
         public static void Update()
         {
-            int count = singletons.Count;
+            var count = singletons.Count;
             while (count-- > 0)
             {
                 var singleton = singletons.Dequeue();
@@ -76,7 +72,7 @@ namespace MMDarkness
 
         public static void LateUpdate()
         {
-            int count = singletons.Count;
+            var count = singletons.Count;
             while (count-- > 0)
             {
                 var singleton = singletons.Dequeue();
@@ -96,11 +92,8 @@ namespace MMDarkness
         {
             // 顺序反过来清理
             var singletonStack = new Stack<ISingleton>();
-            while (singletons.Count > 0)
-            {
-                singletonStack.Push(singletons.Dequeue());
-            }
-            
+            while (singletons.Count > 0) singletonStack.Push(singletons.Dequeue());
+
             while (singletonStack.Count > 0)
             {
                 var singleton = singletonStack.Pop();
@@ -129,14 +122,14 @@ namespace MMDarkness
 
         public static T AddSingleton<T>() where T : Singleton<T>, new()
         {
-            T singleton = new T();
+            var singleton = new T();
             AddSingleton_Internal(singleton, typeof(T));
             return singleton;
         }
 
         public static void AddSingleton(ISingleton singleton)
         {
-            Type singletonType = singleton.GetType();
+            var singletonType = singleton.GetType();
             AddSingleton_Internal(singleton, singletonType);
         }
     }

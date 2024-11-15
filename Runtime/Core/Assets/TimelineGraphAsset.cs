@@ -1,11 +1,11 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using UnityEngine;
 using SerializationUtility = Sirenix.Serialization.SerializationUtility;
 
@@ -15,20 +15,15 @@ namespace MMDarkness
     [Serializable]
     public sealed class TimelineGraphAsset : ScriptableObject, IData
     {
-        [SerializeField]
-        private float length = 5f;
+        [SerializeField] private float length = 5f;
 
-        [SerializeField]
-        private float viewTimeMin = 0f;
+        [SerializeField] private float viewTimeMin;
 
-        [SerializeField]
-        private float viewTimeMax = 5f;
+        [SerializeField] private float viewTimeMax = 5f;
 
-        [NonSerialized]
-        private TrackAsset[] m_cacheOutputTracks;
-        
-        [SerializeField, HideInInspector]
-        public List<GroupAsset> groupAssets = new();
+        [SerializeField] [HideInInspector] public List<GroupAsset> groupAssets = new();
+
+        [NonSerialized] private TrackAsset[] m_cacheOutputTracks;
 
         public float Length
         {
@@ -84,10 +79,7 @@ namespace MMDarkness
                 CreateUtilities.SaveAssetIntoObject(newGroup, this);
                 newGroup.Tracks.Clear();
                 newGroup.groupModel.tracks.Clear();
-                foreach (var track in groupAsset.Tracks)
-                {
-                    newGroup.PasteTrack(track);
-                }
+                foreach (var track in groupAsset.Tracks) newGroup.PasteTrack(track);
             }
 
             return newGroup;
@@ -126,22 +118,21 @@ namespace MMDarkness
 
                 graphModel.groups.Add(groupModel);
             }
+
             return graphModel;
         }
 
         [Button]
         public void SerializeGraphModel()
         {
-            byte[] serializedData = SerializationUtility.SerializeValue(GetGraphModel(),DataFormat.Binary);
-            using FileStream file = File.Create($"{Prefs.SerializeSavePath}/{name}.bytes");
+            var serializedData = SerializationUtility.SerializeValue(GetGraphModel(), DataFormat.Binary);
+            using var file = File.Create($"{Prefs.SerializeSavePath}/{name}.bytes");
             file.Write(serializedData, 0, serializedData.Length);
         }
+
         public void Validate()
         {
-            foreach (var groupAsset in groupAssets)
-            {
-                groupAsset.Root = this;
-            }
+            foreach (var groupAsset in groupAssets) groupAsset.Root = this;
         }
 
         public void SaveToAssets()

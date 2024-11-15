@@ -30,7 +30,7 @@ namespace MMDarkness
                     continue;
                 if (type.IsGenericType)
                     continue;
-                
+
                 var attribute = type.GetCustomAttribute<ViewModelAttribute>(true);
                 s_ViewModelTypeCache[attribute.modelType] = type;
             }
@@ -40,10 +40,7 @@ namespace MMDarkness
 
         public static Type GetViewModelType(Type modelType)
         {
-            if (modelType == null)
-            {
-                return null;
-            }
+            if (modelType == null) return null;
 
             if (!s_ViewModelTypeCache.TryGetValue(modelType, out var viewModelType))
             {

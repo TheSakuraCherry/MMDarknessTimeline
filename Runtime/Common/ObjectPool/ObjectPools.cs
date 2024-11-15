@@ -4,8 +4,8 @@
  *
  *  Title: ""
  *      主题: 对象池基类，只有最基本的功能
- *  Description: 
- *      功能: 
+ *  Description:
+ *      功能:
  *      	1.生成一个对象
  *      	2.回收一个对象
  *  Date:
@@ -34,39 +34,30 @@ namespace MMDarkness
 
     public class ObjectPools : AutoSingleton<ObjectPools>, ISingletonAwake
     {
-        private static Dictionary<Type, IObjectPool> s_CustomPools;
-        
+        private static readonly Dictionary<Type, IObjectPool> s_CustomPools;
+
+        private Dictionary<Type, IObjectPool> pools;
+
         static ObjectPools()
         {
             var baseType = typeof(IObjectPool);
             s_CustomPools = new Dictionary<Type, IObjectPool>();
             foreach (var type in Util_TypeCache.AllTypes)
             {
-                if (!baseType.IsAssignableFrom(type))
-                {
-                    continue;
-                }
+                if (!baseType.IsAssignableFrom(type)) continue;
 
                 var attribute = type.GetCustomAttribute<CustomPoolAttribute>();
-                if (attribute == null)
-                {
-                    continue;
-                }
+                if (attribute == null) continue;
 
                 var pool = Activator.CreateInstance(type);
                 s_CustomPools.Add(attribute.unitType, pool as IObjectPool);
             }
         }
-        
-        private Dictionary<Type, IObjectPool> pools;
 
         public void Awake()
         {
             pools = new Dictionary<Type, IObjectPool>();
-            foreach (var pair in s_CustomPools)
-            {
-                pools.Add(pair.Key, pair.Value);
-            }
+            foreach (var pair in s_CustomPools) pools.Add(pair.Key, pair.Value);
         }
 
         private IObjectPool GetOrCreatePool(Type unitType)
@@ -107,11 +98,8 @@ namespace MMDarkness
 
         public object Spawn(Type unitType)
         {
-            if (unitType.IsValueType)
-            {
-                throw new Exception("Can't spawn value type");
-            }
-            
+            if (unitType.IsValueType) throw new Exception("Can't spawn value type");
+
             var pool = GetPool(unitType);
             if (pool == null)
             {
@@ -121,13 +109,8 @@ namespace MMDarkness
             }
 
             if (pool == null)
-            {
                 throw new Exception($"Can't spawn {unitType.Name}, please register the pool first");
-            }
-            else
-            {
-                return GetOrCreatePool(unitType).Spawn();
-            }
+            return GetOrCreatePool(unitType).Spawn();
         }
 
         public void Recycle(object unit)
@@ -141,7 +124,7 @@ namespace MMDarkness
             var pool = GetPool(unitType);
             if (pool == null)
                 return;
-            
+
             pool.Recycle(unit);
         }
     }

@@ -1,18 +1,14 @@
 ﻿using System;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MMDarkness
 {
     [Serializable]
     public class ClipAsset : DirectableAsset
     {
-        [SerializeReference]
-        public Clip clipModel;
+        [SerializeReference] public Clip clipModel;
 
-        [SerializeField, HideInInspector]
-        private float startTime;
+        [SerializeField] [HideInInspector] private float startTime;
 
         public override TimelineGraphAsset Root
         {
@@ -93,7 +89,7 @@ namespace MMDarkness
 
         public float GetClipWeight(float time)
         {
-            return GetClipWeight(time, this.BlendIn, this.BlendOut);
+            return GetClipWeight(time, BlendIn, BlendOut);
         }
 
         public float GetClipWeight(float time, float blendInOut)
@@ -109,17 +105,12 @@ namespace MMDarkness
         public void TryMatchSubClipLength()
         {
             if (this is ISubClipContainable subClipContainable)
-            {
                 Length = subClipContainable.SubClipLength / subClipContainable.SubClipSpeed;
-            }
         }
 
         public void TryMatchPreviousSubClipLoop()
         {
-            if (this is ISubClipContainable)
-            {
-                Length = (this as ISubClipContainable).GetPreviousLoopLocalTime();
-            }
+            if (this is ISubClipContainable) Length = (this as ISubClipContainable).GetPreviousLoopLocalTime();
         }
 
         public void TryMatchNexSubClipLoop()
@@ -128,10 +119,7 @@ namespace MMDarkness
             {
                 var targetLength = (this as ISubClipContainable).GetNextLoopLocalTime();
                 var nextClip = GetNextClip();
-                if (nextClip == null || StartTime + targetLength <= nextClip.StartTime)
-                {
-                    Length = targetLength;
-                }
+                if (nextClip == null || StartTime + targetLength <= nextClip.StartTime) Length = targetLength;
             }
         }
 

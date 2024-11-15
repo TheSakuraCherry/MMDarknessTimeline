@@ -4,7 +4,7 @@ using UnityEngine;
 namespace MMDarkness
 {
     /// <summary>
-    /// 类排序
+    ///     类排序
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class OrderAttribute : Attribute
@@ -13,12 +13,12 @@ namespace MMDarkness
 
         public OrderAttribute(int order)
         {
-            this.Order = order;
+            Order = order;
         }
     }
 
     /// <summary>
-    /// 菜单自定义名称
+    ///     菜单自定义名称
     /// </summary>
     [AttributeUsage(AttributeTargets.All, Inherited = false)]
     public sealed class MenuNameAttribute : Attribute
@@ -32,7 +32,7 @@ namespace MMDarkness
     }
 
     /// <summary>
-    /// 关联某个类型
+    ///     关联某个类型
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class OptionParamAttribute : Attribute
@@ -46,7 +46,7 @@ namespace MMDarkness
     }
 
     /// <summary>
-    /// 选项排序
+    ///     选项排序
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class OptionSortAttribute : Attribute
@@ -55,12 +55,12 @@ namespace MMDarkness
 
         public OptionSortAttribute(int sort)
         {
-            this.Sort = sort;
+            Sort = sort;
         }
     }
 
     /// <summary>
-    /// 关联某个字段的某个值
+    ///     关联某个字段的某个值
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class OptionRelateParamAttribute : Attribute
@@ -76,7 +76,7 @@ namespace MMDarkness
     }
 
     /// <summary>
-    /// 选择对象路径
+    ///     选择对象路径
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class SelectObjectPathAttribute : Attribute
@@ -85,18 +85,18 @@ namespace MMDarkness
 
         public SelectObjectPathAttribute(Type type)
         {
-            this.Type = type;
+            Type = type;
         }
     }
 
     /// <summary>
-    /// 自定义检视面板
+    ///     自定义检视面板
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class CustomInspectors : Attribute
     {
-        public Type InspectedType;
         public bool EditorForChildClasses;
+        public Type InspectedType;
 
         public CustomInspectors(Type inspectedType)
         {
@@ -111,7 +111,7 @@ namespace MMDarkness
     }
 
     /// <summary>
-    /// 自定义名称
+    ///     自定义名称
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class NameAttribute : Attribute
@@ -120,13 +120,13 @@ namespace MMDarkness
 
         public NameAttribute(string name)
         {
-            this.Name = name;
+            Name = name;
         }
     }
 
 
     /// <summary>
-    /// 指定类别
+    ///     指定类别
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class CategoryAttribute : Attribute
@@ -135,12 +135,12 @@ namespace MMDarkness
 
         public CategoryAttribute(string category)
         {
-            this.Category = category;
+            Category = category;
         }
     }
 
     /// <summary>
-    /// 指定描述
+    ///     指定描述
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class DescriptionAttribute : Attribute
@@ -149,38 +149,38 @@ namespace MMDarkness
 
         public DescriptionAttribute(string description)
         {
-            this.Description = description;
+            Description = description;
         }
     }
 
     /// <summary>
-    /// 指定类型的图标
+    ///     指定类型的图标
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class ShowIconAttribute : Attribute
     {
-        public readonly string IconPath;
         public readonly Type FromType;
+        public readonly string IconPath;
         public readonly Texture Texture;
 
         public ShowIconAttribute(Texture texture)
         {
-            this.Texture = texture;
+            Texture = texture;
         }
 
         public ShowIconAttribute(string iconPath)
         {
-            this.IconPath = iconPath;
+            IconPath = iconPath;
         }
 
         public ShowIconAttribute(Type fromType)
         {
-            this.FromType = fromType;
+            FromType = fromType;
         }
     }
 
     /// <summary>
-    /// 指定显示的颜色
+    ///     指定显示的颜色
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class ColorAttribute : Attribute
@@ -189,17 +189,17 @@ namespace MMDarkness
 
         public ColorAttribute(float r, float g, float b, float a = 1)
         {
-            this.Color = new Color(r, g, b, a);
+            Color = new Color(r, g, b, a);
         }
 
         public ColorAttribute(Color color)
         {
-            this.Color = color;
+            Color = color;
         }
     }
 
     /// <summary>
-    /// 指定附加类型
+    ///     指定附加类型
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class AttachableAttribute : Attribute
@@ -208,12 +208,12 @@ namespace MMDarkness
 
         public AttachableAttribute(params Type[] types)
         {
-            this.Types = types;
+            Types = types;
         }
     }
 
     /// <summary>
-    /// 组内唯一性
+    ///     组内唯一性
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class UniqueAttribute : Attribute
@@ -221,7 +221,7 @@ namespace MMDarkness
     }
 
     /// <summary>
-    /// 自定义片段预览
+    ///     自定义片段预览
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class CustomPreviewAttribute : Attribute

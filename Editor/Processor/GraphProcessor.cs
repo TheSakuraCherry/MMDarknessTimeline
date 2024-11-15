@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace MMDarkness.Editor
@@ -8,16 +7,16 @@ namespace MMDarkness.Editor
     public class GraphProcessor
     {
         private static GraphProcessor m_instance;
-        public static GraphProcessor Instance => m_instance ??= new GraphProcessor();
-        private float m_playTimeMin;
-        private float m_playTimeMax;
+        public TimelineGraph CurrentGraph;
         private float m_currentTime;
+        private float m_playTimeMax;
+        private float m_playTimeMin;
         private bool m_preInitialized;
         private List<IDirectableTimePointer> m_timePointers;
         private List<IDirectableTimePointer> m_unsortedStartTimePointers; //预览器
+        public static GraphProcessor Instance => m_instance ??= new GraphProcessor();
 
         public float PreviousTime { get; private set; }
-        public TimelineGraph CurrentGraph;
 
         public bool IsActive { get; set; }
 
@@ -51,89 +50,67 @@ namespace MMDarkness.Editor
         public void Sample(float time)
         {
             CurrentTime = time;
-            if ((m_currentTime == 0 || m_currentTime == Length) && PreviousTime == m_currentTime)
-            {
-                return;
-            }
+            if ((m_currentTime == 0 || m_currentTime == Length) && PreviousTime == m_currentTime) return;
 
-            if (!m_preInitialized && m_currentTime > 0 && PreviousTime == 0)
-            {
-                InitializePreviewPointers();
-            }
+            if (!m_preInitialized && m_currentTime > 0 && PreviousTime == 0) InitializePreviewPointers();
 
 
-            if (m_timePointers != null)
-            {
-                InternalSamplePointers(m_currentTime, PreviousTime);
-            }
+            if (m_timePointers != null) InternalSamplePointers(m_currentTime, PreviousTime);
 
             PreviousTime = m_currentTime;
         }
 
-        void InternalSamplePointers(float currentTime, float previousTime)
+        private void InternalSamplePointers(float currentTime, float previousTime)
         {
             if (!Application.isPlaying || currentTime > previousTime)
-            {
                 foreach (var t in m_timePointers)
-                {
                     try
                     {
                         t.TriggerForward(currentTime, previousTime);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Debug.LogException(e);
                     }
-                }
-            }
 
 
             if (!Application.isPlaying || currentTime < previousTime)
-            {
                 for (var i = m_timePointers.Count - 1; i >= 0; i--)
-                {
                     try
                     {
                         m_timePointers[i].TriggerBackward(currentTime, previousTime);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Debug.LogException(e);
                     }
-                }
-            }
 
             if (m_unsortedStartTimePointers != null)
-            {
                 foreach (var t in m_unsortedStartTimePointers)
-                {
                     try
                     {
                         t.Update(currentTime, previousTime);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Debug.LogException(e);
                     }
-                }
-            }
         }
 
         /// <summary>
-        /// 初始化时间指针预览器
+        ///     初始化时间指针预览器
         /// </summary>
         public void InitializePreviewPointers()
         {
             m_timePointers = new List<IDirectableTimePointer>();
             m_unsortedStartTimePointers = new List<IDirectableTimePointer>();
 
-            Dictionary<Type, Type> typeDic = new Dictionary<Type, Type>();
+            var typeDic = new Dictionary<Type, Type>();
             var childs = EditorTools.GetTypeMetaDerivedFrom(typeof(PreviewLogic));
             foreach (var t in childs)
             {
                 var arrs = t.Type.GetCustomAttributes(typeof(CustomPreviewAttribute), true);
                 foreach (var arr in arrs)
-                {
                     if (arr is CustomPreviewAttribute c)
                     {
                         var bindT = c.PreviewType;
@@ -146,13 +123,9 @@ namespace MMDarkness.Editor
                         {
                             var old = typeDic[bindT];
                             //如果不是抽象类，且是子类就更新
-                            if (!iT.IsAbstract && iT.IsSubclassOf(old))
-                            {
-                                typeDic[bindT] = iT;
-                            }
+                            if (!iT.IsAbstract && iT.IsSubclassOf(old)) typeDic[bindT] = iT;
                         }
                     }
-                }
             }
 
             /*foreach (var group in CurrentGraph.groups.AsEnumerable().Reverse())

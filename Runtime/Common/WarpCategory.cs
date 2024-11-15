@@ -3,11 +3,12 @@
     public enum WarpCategory
     {
         Once,
-        Loop,
+        Loop
     }
+
     public enum StopMode
     {
         Exit,
-        Skip,
+        Skip
     }
 }

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System.Linq;
-
+using UnityEngine;
 
 namespace MMDarkness
 {
     public static class Prefs
     {
-        public static readonly string ConfigPath = $"{Application.dataPath}/../ProjectSettings/NBCActionEditor.txt";
-
         [Serializable]
         public enum TimeStepMode
         {
@@ -18,24 +15,17 @@ namespace MMDarkness
             Frames
         }
 
-        [Serializable]
-        class SerializedData
-        {
-            public TimeStepMode TimeStepMode = TimeStepMode.Seconds;
-            public float SnapInterval = 0.1f;
-            public int FrameRate = 30;
-
-            public int AutoSaveSeconds;
-            public string SavePath = "Assets/";
-            public string SerialieSavePath = "Assets/";
-            public bool ScrollWheelZooms = true;
-
-            public bool MagnetSnapping = true;
-            public float TrackListLeftMargin = 180f;
-        }
+        public static readonly string ConfigPath = $"{Application.dataPath}/../ProjectSettings/NBCActionEditor.txt";
 
 
         private static SerializedData _data;
+
+        public static readonly float[] snapIntervals = { 0.001f, 0.01f, 0.1f };
+        public static readonly int[] frameRates = { 24, 25, 30, 60 };
+
+
+        public static readonly Dictionary<string, Type> AssetTypes = new();
+        public static readonly List<string> AssetNames = new();
 
         private static SerializedData data
         {
@@ -49,18 +39,12 @@ namespace MMDarkness
                         _data = JsonUtility.FromJson<SerializedData>(json);
                     }
 
-                    if (_data == null)
-                    {
-                        _data = new SerializedData();
-                    }
+                    if (_data == null) _data = new SerializedData();
                 }
 
                 return _data;
             }
         }
-
-        public static readonly float[] snapIntervals = new float[] { 0.001f, 0.01f, 0.1f };
-        public static readonly int[] frameRates = new int[] { 24, 25, 30, 60 };
 
         public static bool scrollWheelZooms
         {
@@ -182,14 +166,10 @@ namespace MMDarkness
             }
         }
 
-        static void Save()
+        private static void Save()
         {
-            System.IO.File.WriteAllText(ConfigPath, JsonUtility.ToJson(data));
+            File.WriteAllText(ConfigPath, JsonUtility.ToJson(data));
         }
-
-
-        public static readonly Dictionary<string, Type> AssetTypes = new Dictionary<string, Type>();
-        public static readonly List<string> AssetNames = new List<string>();
 
         public static void InitializeAssetTypes()
         {
@@ -198,7 +178,10 @@ namespace MMDarkness
             var types = ReflectionTools.GetImplementationsOf(typeof(TimelineGraphAsset));
             foreach (var t in types)
             {
-                var typeName = t.GetCustomAttributes(typeof(NameAttribute), false).FirstOrDefault() is NameAttribute nameAtt ? nameAtt.Name : t.Name.SplitCamelCase();
+                var typeName =
+                    t.GetCustomAttributes(typeof(NameAttribute), false).FirstOrDefault() is NameAttribute nameAtt
+                        ? nameAtt.Name
+                        : t.Name.SplitCamelCase();
                 AssetTypes[typeName] = t;
                 AssetNames.Add(typeName);
             }
@@ -209,13 +192,26 @@ namespace MMDarkness
             foreach (var key in AssetTypes.Keys)
             {
                 var v = AssetTypes[key];
-                if (v == type)
-                {
-                    return key;
-                }
+                if (v == type) return key;
             }
 
             return string.Empty;
+        }
+
+        [Serializable]
+        private class SerializedData
+        {
+            public TimeStepMode TimeStepMode = TimeStepMode.Seconds;
+            public float SnapInterval = 0.1f;
+            public int FrameRate = 30;
+
+            public int AutoSaveSeconds;
+            public string SavePath = "Assets/";
+            public string SerialieSavePath = "Assets/";
+            public bool ScrollWheelZooms = true;
+
+            public bool MagnetSnapping = true;
+            public float TrackListLeftMargin = 180f;
         }
     }
 }

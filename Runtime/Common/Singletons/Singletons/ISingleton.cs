@@ -5,7 +5,7 @@ namespace MMDarkness
     public interface ISingleton : IDisposable
     {
         bool IsDisposed { get; }
-        
+
         void Register();
     }
 

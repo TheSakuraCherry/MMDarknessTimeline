@@ -3,7 +3,6 @@
     [Name("简体中文")]
     public class LanCHS : ILanguages
     {
-        
         //**********  Welcome *********
         public static string Title = "行为时间轴编辑器";
         public static string CreateAsset = "创建时间轴";

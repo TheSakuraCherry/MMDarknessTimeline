@@ -6,8 +6,7 @@ namespace MMDarkness
 {
     public static class AttributesUtility
     {
-        private static readonly Dictionary<Type, Dictionary<int, string>> CacheMenuName =
-            new Dictionary<Type, Dictionary<int, string>>();
+        private static readonly Dictionary<Type, Dictionary<int, string>> CacheMenuName = new();
 
         public static string GetMenuName(int index, Type type)
         {
@@ -16,17 +15,14 @@ namespace MMDarkness
             {
                 if (CacheMenuName.TryGetValue(type, out var dictionary))
                 {
-                    if (dictionary.TryGetValue(index, out string name))
-                    {
-                        return name;
-                    }
+                    if (dictionary.TryGetValue(index, out var name)) return name;
                 }
                 else
                 {
                     CacheMenuName[type] = new Dictionary<int, string>();
                 }
 
-                FieldInfo[] fieldInfos = type.GetFields();
+                var fieldInfos = type.GetFields();
                 foreach (var field in fieldInfos)
                 {
                     var fieldType = field.FieldType;

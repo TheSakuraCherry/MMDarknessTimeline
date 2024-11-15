@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-
-namespace MMDarkness.Editor
+﻿namespace MMDarkness.Editor
 {
     [CustomInspectors(typeof(TimelineGraphAsset), true)]
     public class TimelineGraphInspector : InspectorsBase

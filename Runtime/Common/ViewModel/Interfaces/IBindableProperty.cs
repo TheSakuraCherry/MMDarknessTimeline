@@ -4,10 +4,9 @@ namespace MMDarkness
 {
     public interface IBindableProperty : IDisposable
     {
-        event ValueChangedEvent<object> onBoxedValueChanged;
-
         object BoxedValue { get; set; }
         Type ValueType { get; }
+        event ValueChangedEvent<object> onBoxedValueChanged;
 
         void SetValueWithoutNotify(object value);
         void NotifyValueChanged();
@@ -16,9 +15,8 @@ namespace MMDarkness
 
     public interface IBindableProperty<T> : IDisposable
     {
-        event ValueChangedEvent<T> onValueChanged;
-
         T Value { get; set; }
+        event ValueChangedEvent<T> onValueChanged;
 
         void SetValueWithoutNotify(T value);
         void RegisterValueChangedEvent(ValueChangedEvent<T> onValueChanged);

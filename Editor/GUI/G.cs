@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace MMDarkness.Editor
@@ -15,12 +14,19 @@ namespace MMDarkness.Editor
 
         public static float SnapTime(float time)
         {
-            if (Event.current.control)
-            {
-                return time;
-            }
+            if (Event.current.control) return time;
 
-            return (Mathf.Round(time / Prefs.snapInterval) * Prefs.snapInterval);
+            return Mathf.Round(time / Prefs.snapInterval) * Prefs.snapInterval;
+        }
+
+
+        internal static bool IsFilteredOutBySearch(ScriptableObject direct)
+        {
+            if (string.IsNullOrEmpty(SearchString)) return false;
+
+            if (string.IsNullOrEmpty(direct.name)) return true;
+
+            return !direct.name.ToLower().Contains(SearchString.ToLower());
         }
 
         #region Size
@@ -60,21 +66,5 @@ namespace MMDarkness.Editor
         }
 
         #endregion
-        
-        
-        internal static bool IsFilteredOutBySearch(ScriptableObject direct)
-        {
-            if (string.IsNullOrEmpty(SearchString))
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(direct.name))
-            {
-                return true;
-            }
-
-            return !direct.name.ToLower().Contains(SearchString.ToLower());
-        }
     }
 }
