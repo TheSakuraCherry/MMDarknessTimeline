@@ -1,0 +1,15 @@
+
+UnityProject/UserSettings/Layouts/default-2022.dwlt
+UnityProject/UserSettings/Search.settings
+
+#Luban
+Tools/Luban/
+Tools/Luban.ClientServer/
+Configs/.cache.meta
+GenerateDatas/
+
+#FileServer
+Tools/FileServer/AssetRoot
+
+UnityProject/ProjectSettings/CommonBurstAotSettings.json
+UnityProject/ProjectSettings/BurstAotSettings_StandaloneWindows.json
