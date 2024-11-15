@@ -1,2 +1,0 @@
-# MMDarknessTimeline
-Unity一个支持runtime和编辑器的Timeline，运行时采用序列化二进制文件的形式，零成本嵌入你的项目

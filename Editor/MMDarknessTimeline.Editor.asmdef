@@ -2,7 +2,7 @@
     "name": "MMDarknessTimeline.Editor",
     "rootNamespace": "MMDarknessTimeline.Editor",
     "references": [
-        "GUID:780cebbbf61092c418710fdd145894d9"
+        "GUID:5a2b6d669852d09419b98386a20ab597"
     ],
     "includePlatforms": [
         "Editor"
