@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace MMDarkness.Editor
+﻿namespace MMDarkness.Editor
 {
     public static class GraphExtension
     {
@@ -11,7 +9,8 @@ namespace MMDarkness.Editor
 
         public static float PosToTime(this TimelineGraphAsset timelineGraphAsset, float pos)
         {
-            return (pos - Styles.LeftMargin) / G.CenterRect.width * timelineGraphAsset.ViewTime + timelineGraphAsset.ViewTimeMin;
+            return (pos - Styles.LeftMargin) / G.CenterRect.width * timelineGraphAsset.ViewTime +
+                   timelineGraphAsset.ViewTimeMin;
         }
     }
 }

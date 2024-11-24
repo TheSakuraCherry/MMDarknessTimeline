@@ -3,7 +3,6 @@
     [Name("English")]
     public class LanEN : ILanguages
     {
-        
         //**********  Welcome *********
         public static string Title = "Action Editor";
         public static string CreateAsset = "Create Asset";

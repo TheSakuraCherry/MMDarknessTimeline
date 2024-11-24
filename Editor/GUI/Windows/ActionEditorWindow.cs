@@ -12,19 +12,16 @@ namespace MMDarkness.Editor
 {
     public class ActionEditorWindow : EditorWindow
     {
-        [NonSerialized]
-        private float editorPreviousTime;
+        [NonSerialized] private float editorPreviousTime;
 
-        [NonSerialized]
-        internal bool WillRepaint;
+        [NonSerialized] internal bool WillRepaint;
 
-        [NonSerialized]
-        internal bool ShowDragDropInfo;
+        [NonSerialized] internal bool ShowDragDropInfo;
 
         public TimelineGraphAsset TimelineGraphAsset => App.GraphAsset;
         public TimelineGraphPreviewProcessor player => App.Player;
 
-        int UID(int g, int t, int a)
+        private int UID(int g, int t, int a)
         {
             var A = g.ToString("D3");
             var B = t.ToString("D3");
@@ -52,7 +49,7 @@ namespace MMDarkness.Editor
             window.Close();
         }
 
-        static bool Quit()
+        private static bool Quit()
         {
             CloseWindow();
             return true;
@@ -62,7 +59,7 @@ namespace MMDarkness.Editor
 
         #region 生命周期接口
 
-        void OnEnable()
+        private void OnEnable()
         {
             current = this;
             Styles.Load();
@@ -99,7 +96,7 @@ namespace MMDarkness.Editor
         }
 
 
-        void OnDisable()
+        private void OnDisable()
         {
             EditorSceneManager.sceneSaving -= OnWillSaveScene;
 
@@ -111,10 +108,7 @@ namespace MMDarkness.Editor
             App.OnPlay -= OnPlay;
 
             Tools.hidden = false;
-            if (App.GraphAsset != null && !Application.isPlaying)
-            {
-                App.Stop(true);
-            }
+            if (App.GraphAsset != null && !Application.isPlaying) App.Stop(true);
 
             EditorApplication.wantsToQuit -= Quit;
 
@@ -122,22 +116,19 @@ namespace MMDarkness.Editor
         }
 
 
-        void OnPlay()
+        private void OnPlay()
         {
             editorPreviousTime = Time.realtimeSinceStartup;
         }
 
-        void OnStop()
+        private void OnStop()
         {
             WillRepaint = true;
         }
 
-        void OnEditorUpdate()
+        private void OnEditorUpdate()
         {
-            if (App.GraphAsset == null)
-            {
-                return;
-            }
+            if (App.GraphAsset == null) return;
 
             if (EditorApplication.isCompiling)
             {
@@ -153,12 +144,10 @@ namespace MMDarkness.Editor
 
             player.Sample();
 
-            if (App.EditorPlaybackState == EditorPlaybackState.Stopped)
-            {
-                return;
-            }
+            if (App.EditorPlaybackState == EditorPlaybackState.Stopped) return;
 
-            if (player.CurrentTime >= App.GraphAsset.Length && App.EditorPlaybackState == EditorPlaybackState.PlayingForwards)
+            if (player.CurrentTime >= App.GraphAsset.Length &&
+                App.EditorPlaybackState == EditorPlaybackState.PlayingForwards)
             {
                 if (App.EditorPlaybackWrapMode == WrapMode.Once)
                 {
@@ -183,7 +172,7 @@ namespace MMDarkness.Editor
             player.CurrentTime += App.EditorPlaybackState == EditorPlaybackState.PlayingForwards ? delta : -delta;
         }
 
-        void Update()
+        private void Update()
         {
             if (WillRepaint)
             {
@@ -194,7 +183,7 @@ namespace MMDarkness.Editor
             player?.Sample();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             G.Reset();
             GUI.skin.label.richText = true;
@@ -219,10 +208,7 @@ namespace MMDarkness.Editor
             }
 
 
-            if (e.type == EventType.MouseDown)
-            {
-                RemoveNotification();
-            }
+            if (e.type == EventType.MouseDown) RemoveNotification();
 
 
             //记录撤消和脏污？这是一个过度的回退。某些操作也会注册撤消。
@@ -245,7 +231,7 @@ namespace MMDarkness.Editor
         }
 
 
-        void OnWillSaveScene(Scene scene, string path)
+        private void OnWillSaveScene(Scene scene, string path)
         {
             if (App.GraphAsset != null && player.CurrentTime > 0)
             {
@@ -259,19 +245,15 @@ namespace MMDarkness.Editor
 
         #region Init
 
-        void InitializeAll()
+        private void InitializeAll()
         {
             Lan.Load();
             Prefs.InitializeAssetTypes();
             App.OnInitialize?.Invoke();
             //停止播放
             if (App.GraphAsset != null)
-            {
                 if (!Application.isPlaying)
-                {
                     App.Stop(true);
-                }
-            }
 
             WillRepaint = true;
         }
@@ -281,9 +263,9 @@ namespace MMDarkness.Editor
         #region 快捷键
 
         /// <summary>
-        /// 监听执行鼠标快捷键
+        ///     监听执行鼠标快捷键
         /// </summary>
-        void DoKeyboardShortcuts()
+        private void DoKeyboardShortcuts()
         {
             var e = Event.current;
             var isCtrl = e.control;
@@ -293,32 +275,21 @@ namespace MMDarkness.Editor
             {
                 //Ctrl +
                 if (isCtrl)
-                {
                     if (e.keyCode == KeyCode.S)
-                    {
                         App.AutoSave();
-                    }
-                }
 
                 //play
                 if (e.keyCode == KeyCode.Space && !e.shift)
                 {
                     if (App.EditorPlaybackState != EditorPlaybackState.Stopped)
-                    {
                         App.Pause();
-                    }
                     else
-                    {
                         App.Play();
-                    }
 
                     e.Use();
                 }
 
-                if (e.keyCode == KeyCode.Escape)
-                {
-                    App.Stop(false);
-                }
+                if (e.keyCode == KeyCode.Escape) App.Stop(false);
 
                 //下一帧
                 if (e.keyCode == KeyCode.Period || e.keyCode == KeyCode.RightArrow)
@@ -352,19 +323,16 @@ namespace MMDarkness.Editor
 
         private Dictionary<ClipAsset, ActionClipWrapper> clipWrappersMap = new();
 
-        ActionClipWrapper interactingClip;
+        private ActionClipWrapper interactingClip;
 
 
-        [NonSerialized]
-        private Vector2? multiSelectStartPos;
+        [NonSerialized] private Vector2? multiSelectStartPos;
 
-        [NonSerialized]
-        private Rect preMultiSelectionRetimeMinMax;
+        [NonSerialized] private Rect preMultiSelectionRetimeMinMax;
 
-        [NonSerialized]
-        private int multiSelectionScaleDirection;
+        [NonSerialized] private int multiSelectionScaleDirection;
 
-        List<ActionClipWrapper> multiSelection;
+        private List<ActionClipWrapper> multiSelection;
 
         internal List<GuideLine> pendingGuides;
 
@@ -392,27 +360,15 @@ namespace MMDarkness.Editor
         {
             var e = Event.current;
 
-            if (e.button == 2 && e.type == EventType.MouseDown)
-            {
-                isMouseButton2Down = true;
-            }
+            if (e.button == 2 && e.type == EventType.MouseDown) isMouseButton2Down = true;
 
-            if (e.button == 2 && e.rawType == EventType.MouseUp)
-            {
-                isMouseButton2Down = false;
-            }
+            if (e.button == 2 && e.rawType == EventType.MouseUp) isMouseButton2Down = false;
 
             mousePosition = e.mousePosition;
             if (interactingClip == null && e.type == EventType.Layout)
-            {
                 foreach (var group in TimelineGraphAsset.groupAssets)
-                {
-                    foreach (var track in group.Tracks)
-                    {
-                        track.Clips = track.Clips.OrderBy(a => a.StartTime).ToList();
-                    }
-                }
-            }
+                foreach (var track in group.Tracks)
+                    track.Clips = track.Clips.OrderBy(a => a.StartTime).ToList();
 
             CenterRect = G.CenterRect;
 
@@ -447,14 +403,12 @@ namespace MMDarkness.Editor
                 var label = "Drag & Drop GameObjects or Prefabs in this window to create Actor Groups";
                 var size = new GUIStyle("label").CalcSize(new GUIContent(label));
                 var notificationRect = new Rect(0, 0, size.x, size.y);
-                notificationRect.center = new Vector2((G.ScreenWidth / 2) + (Styles.LeftMargin / 2), (G.ScreenHeight / 2) + Styles.TopMargin);
+                notificationRect.center = new Vector2(G.ScreenWidth / 2 + Styles.LeftMargin / 2,
+                    G.ScreenHeight / 2 + Styles.TopMargin);
                 GUI.Label(notificationRect, label);
             }
 
-            if (e.type == EventType.MouseDrag || e.type == EventType.MouseUp || GUI.changed)
-            {
-                WillRepaint = true;
-            }
+            if (e.type == EventType.MouseDrag || e.type == EventType.MouseUp || GUI.changed) WillRepaint = true;
 
             Handles.color = Color.black;
             Handles.DrawLine(new Vector2(0, CenterRect.y + 1), new Vector2(CenterRect.xMax, CenterRect.y + 1));
@@ -466,23 +420,17 @@ namespace MMDarkness.Editor
             GUI.skin = null;
         }
 
-        void AcceptDrops()
+        private void AcceptDrops()
         {
-            if (player.CurrentTime > 0)
-            {
-                return;
-            }
+            if (player.CurrentTime > 0) return;
 
             var e = Event.current;
-            if (e.type == EventType.DragUpdated)
-            {
-                DragAndDrop.visualMode = DragAndDropVisualMode.Link;
-            }
+            if (e.type == EventType.DragUpdated) DragAndDrop.visualMode = DragAndDropVisualMode.Link;
         }
 
         #region Magnet Snap
 
-        void CacheMagnetSnapTimes(ClipAsset clipAsset = null)
+        private void CacheMagnetSnapTimes(ClipAsset clipAsset = null)
         {
             var result = new List<float>();
             result.Add(0);
@@ -502,12 +450,9 @@ namespace MMDarkness.Editor
             magnetSnapTimesCache = result.Distinct().ToArray();
         }
 
-        float? MagnetSnapTime(float time, float[] snapTimes)
+        private float? MagnetSnapTime(float time, float[] snapTimes)
         {
-            if (snapTimes == null)
-            {
-                return null;
-            }
+            if (snapTimes == null) return null;
 
             var bestDistance = float.PositiveInfinity;
             var bestTime = float.PositiveInfinity;
@@ -522,10 +467,7 @@ namespace MMDarkness.Editor
                 }
             }
 
-            if (Mathf.Abs(bestTime - time) <= MAGNET_SNAP_INTERVAL)
-            {
-                return bestTime;
-            }
+            if (Mathf.Abs(bestTime - time) <= MAGNET_SNAP_INTERVAL) return bestTime;
 
             return null;
         }
@@ -535,9 +477,9 @@ namespace MMDarkness.Editor
         #region 多选
 
         /// <summary>
-        /// 多选
+        ///     多选
         /// </summary>
-        void DoMultiSelection()
+        private void DoMultiSelection()
         {
             var e = Event.current;
 
@@ -558,7 +500,8 @@ namespace MMDarkness.Editor
                     GUI.color = Color.white.WithAlpha(0.05f);
                     GUI.DrawTexture(r, Styles.WhiteTexture);
                     GUI.color = Color.white;
-                    foreach (var wrapper in clipWrappers.Values.Where(b => r.Encapsulates(b.rect) && !b.action.IsLocked))
+                    foreach (var wrapper in
+                             clipWrappers.Values.Where(b => r.Encapsulates(b.rect) && !b.action.IsLocked))
                     {
                         GUI.color = new Color(0.5f, 0.5f, 1, 0.5f);
                         GUI.Box(wrapper.rect, string.Empty, Styles.ClipBoxStyle);
@@ -571,7 +514,8 @@ namespace MMDarkness.Editor
             {
                 if (bigEnough)
                 {
-                    multiSelection = clipWrappers.Values.Where(b => r.Encapsulates(b.rect) && !b.action.IsLocked).ToList();
+                    multiSelection = clipWrappers.Values.Where(b => r.Encapsulates(b.rect) && !b.action.IsLocked)
+                        .ToList();
                     if (multiSelection.Count == 1)
                     {
                         DirectorUtility.SelectedObject = multiSelection[0].action;
@@ -595,16 +539,14 @@ namespace MMDarkness.Editor
                 GUI.DrawTexture(rightDragRect, Styles.WhiteTexture);
                 GUI.color = Color.white;
 
-                if (e.type == EventType.MouseDown && (leftDragRect.Contains(e.mousePosition) || rightDragRect.Contains(e.mousePosition)))
+                if (e.type == EventType.MouseDown &&
+                    (leftDragRect.Contains(e.mousePosition) || rightDragRect.Contains(e.mousePosition)))
                 {
                     multiSelectionScaleDirection = leftDragRect.Contains(e.mousePosition) ? -1 : 1;
                     var minTime = Mathf.Min(multiSelection.Select(b => b.action.StartTime).ToArray());
                     var maxTime = Mathf.Max(multiSelection.Select(b => b.action.EndTime).ToArray());
                     preMultiSelectionRetimeMinMax = Rect.MinMaxRect(minTime, 0, maxTime, 0);
-                    foreach (var wrapper in multiSelection)
-                    {
-                        wrapper.BeginClipAdjust();
-                    }
+                    foreach (var wrapper in multiSelection) wrapper.BeginClipAdjust();
 
                     e.Use();
                 }
@@ -617,8 +559,12 @@ namespace MMDarkness.Editor
                         var preTimeMax = preMultiSelectionRetimeMinMax.xMax;
                         var pointerTime = G.SnapTime(TimelineGraphAsset.PosToTime(mousePosition.x));
 
-                        var lerpMin = multiSelectionScaleDirection == -1 ? Mathf.Clamp(pointerTime, 0, preTimeMax) : preTimeMin;
-                        var lerpMax = multiSelectionScaleDirection == 1 ? Mathf.Max(pointerTime, preTimeMin) : preTimeMax;
+                        var lerpMin = multiSelectionScaleDirection == -1
+                            ? Mathf.Clamp(pointerTime, 0, preTimeMax)
+                            : preTimeMin;
+                        var lerpMax = multiSelectionScaleDirection == 1
+                            ? Mathf.Max(pointerTime, preTimeMin)
+                            : preTimeMax;
 
                         var normIn = Mathf.InverseLerp(preTimeMin, preTimeMax, clipWrapper.preScaleStartTime);
                         clipWrapper.action.StartTime = Mathf.Lerp(lerpMin, lerpMax, normIn);
@@ -633,10 +579,7 @@ namespace MMDarkness.Editor
                 if (e.rawType == EventType.MouseUp)
                 {
                     multiSelectionScaleDirection = 0;
-                    foreach (var clipWrapper in multiSelection)
-                    {
-                        clipWrapper.EndClipAdjust();
-                    }
+                    foreach (var clipWrapper in multiSelection) clipWrapper.EndClipAdjust();
                 }
             }
 
@@ -654,9 +597,9 @@ namespace MMDarkness.Editor
         #region 辅助标线
 
         /// <summary>
-        /// 绘制时间参考线
+        ///     绘制时间参考线
         /// </summary>
-        void DrawGuides()
+        private void DrawGuides()
         {
             //区间开始时间参考线
             DrawGuideLine(0, isProSkin ? Color.gray : Color.black);
@@ -665,45 +608,32 @@ namespace MMDarkness.Editor
             DrawGuideLine(TimelineGraphAsset.Length, isProSkin ? Color.white : Color.black);
 
             //当前播放帧的实际参考线
-            if (player.CurrentTime > 0)
-            {
-                DrawGuideLine(player.CurrentTime, player.GetScriberColor());
-            }
+            if (player.CurrentTime > 0) DrawGuideLine(player.CurrentTime, player.GetScriberColor());
 
             // 开始和结束时间标线
             if (interactingClip != null)
             {
                 if (interactingClip.isDragging || interactingClip.isScalingStart)
-                {
                     DrawGuideLine(interactingClip.action.StartTime, Color.yellow.WithAlpha(0.2f));
-                }
 
                 if (interactingClip.isDragging || interactingClip.isScalingEnd)
-                {
                     DrawGuideLine(interactingClip.action.EndTime, Color.yellow.WithAlpha(0.2f));
-                }
             }
 
-            if (draggedSection != null)
-            {
-                DrawGuideLine(draggedSection.time, draggedSection.color);
-            }
+            if (draggedSection != null) DrawGuideLine(draggedSection.time, draggedSection.color);
 
 
-            for (var i = 0; i < pendingGuides.Count; i++)
-            {
-                DrawGuideLine(pendingGuides[i].Time, pendingGuides[i].Color);
-            }
+            for (var i = 0; i < pendingGuides.Count; i++) DrawGuideLine(pendingGuides[i].Time, pendingGuides[i].Color);
 
             pendingGuides.Clear();
         }
 
         /// <summary>
-        /// 绘制垂直参考线
+        ///     绘制垂直参考线
         /// </summary>
         /// <param name="time"></param>
         /// <param name="color"></param>
-        void DrawGuideLine(float time, Color color)
+        private void DrawGuideLine(float time, Color color)
         {
             if (time >= TimelineGraphAsset.ViewTimeMin && time <= TimelineGraphAsset.ViewTimeMax)
             {
@@ -716,7 +646,7 @@ namespace MMDarkness.Editor
         }
 
         /// <summary>
-        /// 添加拖动游标
+        ///     添加拖动游标
         /// </summary>
         internal void AddCursorRect(Rect rect, MouseCursor type)
         {
@@ -729,14 +659,11 @@ namespace MMDarkness.Editor
         #region 刻度控制
 
         /// <summary>
-        /// 时间轴刻度控制
+        ///     时间轴刻度控制
         /// </summary>
-        void DoScrubControls()
+        private void DoScrubControls()
         {
-            if (player.IsActive)
-            {
-                return;
-            }
+            if (player.IsActive) return;
 
             var e = Event.current;
             if (e.type == EventType.MouseDown && G.TopMiddleRect.Contains(mousePosition))
@@ -756,11 +683,9 @@ namespace MMDarkness.Editor
                     var menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Set To Last Clip Time"), false, () =>
                     {
-                        var lastClip = TimelineGraphAsset.Directables.Where(d => d is ClipAsset).OrderBy(d => d.EndTime).LastOrDefault();
-                        if (lastClip != null)
-                        {
-                            TimelineGraphAsset.Length = lastClip.EndTime;
-                        }
+                        var lastClip = TimelineGraphAsset.Directables.Where(d => d is ClipAsset).OrderBy(d => d.EndTime)
+                            .LastOrDefault();
+                        if (lastClip != null) TimelineGraphAsset.Length = lastClip.EndTime;
                     });
                     menu.ShowAsContext();
                 }
@@ -778,7 +703,8 @@ namespace MMDarkness.Editor
             if (isMovingScrubCarret)
             {
                 player.CurrentTime = G.SnapTime(pointerTime);
-                player.CurrentTime = Mathf.Clamp(player.CurrentTime, Mathf.Max(TimelineGraphAsset.ViewTimeMin, 0) + float.Epsilon,
+                player.CurrentTime = Mathf.Clamp(player.CurrentTime,
+                    Mathf.Max(TimelineGraphAsset.ViewTimeMin, 0) + float.Epsilon,
                     TimelineGraphAsset.ViewTimeMax - float.Epsilon);
             }
 
@@ -787,31 +713,30 @@ namespace MMDarkness.Editor
                 TimelineGraphAsset.Length = G.SnapTime(pointerTime);
                 var magnetSnap = MagnetSnapTime(TimelineGraphAsset.Length, magnetSnapTimesCache);
                 TimelineGraphAsset.Length = magnetSnap != null ? magnetSnap.Value : TimelineGraphAsset.Length;
-                TimelineGraphAsset.Length = Mathf.Clamp(TimelineGraphAsset.Length, TimelineGraphAsset.ViewTimeMin + float.Epsilon,
+                TimelineGraphAsset.Length = Mathf.Clamp(TimelineGraphAsset.Length,
+                    TimelineGraphAsset.ViewTimeMin + float.Epsilon,
                     TimelineGraphAsset.ViewTimeMax - float.Epsilon);
             }
         }
 
         /// <summary>
-        /// 时间轴缩放和平移操作
+        ///     时间轴缩放和平移操作
         /// </summary>
-        void DoZoomAndPan()
+        private void DoZoomAndPan()
         {
-            if (!CenterRect.Contains(mousePosition))
-            {
-                return;
-            }
+            if (!CenterRect.Contains(mousePosition)) return;
 
             var e = Event.current;
             //缩放或向下/向上滚动，如果prefs设置为滚轮
             if ((e.type == EventType.ScrollWheel && Prefs.scrollWheelZooms) || (e.alt && !e.shift && e.button == 1))
             {
                 AddCursorRect(CenterRect, MouseCursor.Zoom);
-                if (e.type == EventType.MouseDrag || e.type == EventType.MouseDown || e.type == EventType.MouseUp || e.type == EventType.ScrollWheel)
+                if (e.type == EventType.MouseDrag || e.type == EventType.MouseDown || e.type == EventType.MouseUp ||
+                    e.type == EventType.ScrollWheel)
                 {
                     var pointerTimeA = TimelineGraphAsset.PosToTime(mousePosition.x);
                     var delta = e.alt ? -e.delta.x * 0.1f : e.delta.y;
-                    var t = (Mathf.Abs(delta * 25) / CenterRect.width) * TimelineGraphAsset.ViewTime;
+                    var t = Mathf.Abs(delta * 25) / CenterRect.width * TimelineGraphAsset.ViewTime;
                     TimelineGraphAsset.ViewTimeMin += delta > 0 ? -t : t;
                     TimelineGraphAsset.ViewTimeMax += delta > 0 ? t : -t;
                     var pointerTimeB = TimelineGraphAsset.PosToTime(mousePosition.x + e.delta.x);
@@ -828,7 +753,7 @@ namespace MMDarkness.Editor
                 AddCursorRect(CenterRect, MouseCursor.Pan);
                 if (e.type == EventType.MouseDrag || e.type == EventType.MouseDown || e.type == EventType.MouseUp)
                 {
-                    var t = (Mathf.Abs(e.delta.x) / CenterRect.width) * TimelineGraphAsset.ViewTime;
+                    var t = Mathf.Abs(e.delta.x) / CenterRect.width * TimelineGraphAsset.ViewTime;
                     TimelineGraphAsset.ViewTimeMin += e.delta.x > 0 ? -t : t;
                     TimelineGraphAsset.ViewTimeMax += e.delta.x > 0 ? -t : t;
                     G.ScrollPos.y -= e.delta.y;
@@ -844,57 +769,45 @@ namespace MMDarkness.Editor
         //初始化动作剪辑包装器
         internal void InitClipWrappers()
         {
-            if (TimelineGraphAsset == null)
-            {
-                return;
-            }
+            if (TimelineGraphAsset == null) return;
 
             var lastTime = player.CurrentTime;
 
-            if (!Application.isPlaying)
-            {
-                App.Stop(true);
-            }
+            if (!Application.isPlaying) App.Stop(true);
 
             clipWrappers = new Dictionary<int, ActionClipWrapper>();
             clipWrappersMap = new Dictionary<ClipAsset, ActionClipWrapper>();
-            for (int g = 0; g < TimelineGraphAsset.groupAssets.Count; g++)
+            for (var g = 0; g < TimelineGraphAsset.groupAssets.Count; g++)
+            for (var t = 0; t < TimelineGraphAsset.groupAssets[g].Tracks.Count; t++)
+            for (var a = 0; a < TimelineGraphAsset.groupAssets[g].Tracks[t].Clips.Count; a++)
             {
-                for (int t = 0; t < TimelineGraphAsset.groupAssets[g].Tracks.Count; t++)
+                var id = UID(g, t, a);
+                if (clipWrappers.ContainsKey(id))
                 {
-                    for (int a = 0; a < TimelineGraphAsset.groupAssets[g].Tracks[t].Clips.Count; a++)
-                    {
-                        var id = UID(g, t, a);
-                        if (clipWrappers.ContainsKey(id))
-                        {
-                            Debug.LogError("Collided UIDs. This should really not happen but it did!");
-                            continue;
-                        }
-
-                        var clip = TimelineGraphAsset.groupAssets[g].Tracks[t].Clips[a];
-                        var wrapper = new ActionClipWrapper(clip);
-                        clipWrappers[id] = wrapper;
-                        clipWrappersMap[clip] = wrapper;
-                    }
+                    Debug.LogError("Collided UIDs. This should really not happen but it did!");
+                    continue;
                 }
+
+                var clip = TimelineGraphAsset.groupAssets[g].Tracks[t].Clips[a];
+                var wrapper = new ActionClipWrapper(clip);
+                clipWrappers[id] = wrapper;
+                clipWrappersMap[clip] = wrapper;
             }
 
             player.InitializePreviewPointers();
 
-            if (lastTime > 0)
-            {
-                player.CurrentTime = lastTime;
-            }
+            if (lastTime > 0) player.CurrentTime = lastTime;
         }
 
         /// <summary>
-        /// 中间区域-时间轴显示区域
+        ///     中间区域-时间轴显示区域
         /// </summary>
         /// <param name="centerRect"></param>
-        void ShowTimeLines(Rect centerRect)
+        private void ShowTimeLines(Rect centerRect)
         {
             var e = Event.current;
-            var bgRect = Rect.MinMaxRect(centerRect.xMin, Styles.TopMargin + Styles.ToolbarHeight + G.ScrollPos.y, centerRect.xMax,
+            var bgRect = Rect.MinMaxRect(centerRect.xMin, Styles.TopMargin + Styles.ToolbarHeight + G.ScrollPos.y,
+                centerRect.xMax,
                 G.ScreenHeight - Styles.ToolbarHeight + G.ScrollPos.y);
             GUI.color = Color.black.WithAlpha(0.1f);
             GUI.DrawTexture(bgRect, Styles.WhiteTexture);
@@ -907,10 +820,7 @@ namespace MMDarkness.Editor
             {
                 var i = Mathf.Round(_i * 10) / 10;
                 DrawGuideLine(i, Color.black.WithAlpha(0.05f));
-                if (i % G.timeInfoHighMod == 0)
-                {
-                    DrawGuideLine(i, Color.black.WithAlpha(0.05f));
-                }
+                if (i % G.timeInfoHighMod == 0) DrawGuideLine(i, Color.black.WithAlpha(0.05f));
             }
 
             GUI.BeginGroup(centerRect);
@@ -919,7 +829,7 @@ namespace MMDarkness.Editor
 
             BeginWindows();
 
-            for (int g = 0; g < TimelineGraphAsset.groupAssets.Count; g++)
+            for (var g = 0; g < TimelineGraphAsset.groupAssets.Count; g++)
             {
                 var group = TimelineGraphAsset.groupAssets[g];
                 ShowGroupArea(group, g, e, ref nextYPos);
@@ -945,7 +855,8 @@ namespace MMDarkness.Editor
             //超出范围的变暗
             if (TimelineGraphAsset.ViewTimeMax > TimelineGraphAsset.Length)
             {
-                var endPos = Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.Length) + G.LeftRect.width, centerRect.xMin);
+                var endPos = Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.Length) + G.LeftRect.width,
+                    centerRect.xMin);
                 var darkRect = Rect.MinMaxRect(endPos, centerRect.yMin, centerRect.xMax, centerRect.yMax);
                 GUI.color = Color.black.WithAlpha(0.3f);
                 GUI.Box(darkRect, string.Empty, "TextField");
@@ -964,17 +875,15 @@ namespace MMDarkness.Editor
 
             //确保剪辑不交叉
             if (e.rawType == EventType.MouseUp)
-            {
                 if (interactingClip != null)
                 {
                     interactingClip.ResetInteraction();
                     interactingClip.EndClipAdjust();
                     interactingClip = null;
                 }
-            }
         }
 
-        void ShowGroupArea(GroupAsset groupAsset, int groupIndex, Event e, ref float nextYPos)
+        private void ShowGroupArea(GroupAsset groupAsset, int groupIndex, Event e, ref float nextYPos)
         {
             if (G.IsFilteredOutBySearch(groupAsset))
             {
@@ -982,31 +891,34 @@ namespace MMDarkness.Editor
                 return;
             }
 
-            var groupRect = Rect.MinMaxRect(Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), TimelineGraphAsset.TimeToPos(0)),
+            var groupRect = Rect.MinMaxRect(
+                Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin),
+                    TimelineGraphAsset.TimeToPos(0)),
                 nextYPos, TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMax), nextYPos + Styles.GroupHeight);
             nextYPos += Styles.GroupHeight;
 
             if (groupAsset.IsCollapsed)
             {
                 GUI.color = Color.black.WithAlpha(0.15f);
-                var collapseRect = Rect.MinMaxRect(groupRect.xMin + 2, groupRect.yMin + 2, groupRect.xMax, groupRect.yMax - 4);
+                var collapseRect = Rect.MinMaxRect(groupRect.xMin + 2, groupRect.yMin + 2, groupRect.xMax,
+                    groupRect.yMax - 4);
                 GUI.DrawTexture(collapseRect, Styles.WhiteTexture);
                 GUI.color = Color.grey.WithAlpha(0.5f);
                 foreach (var track in groupAsset.Tracks)
+                foreach (var clip in track.Clips)
                 {
-                    foreach (var clip in track.Clips)
-                    {
-                        var start = TimelineGraphAsset.TimeToPos(clip.StartTime);
-                        var end = TimelineGraphAsset.TimeToPos(clip.EndTime);
-                        GUI.DrawTexture(Rect.MinMaxRect(start + 0.5f, collapseRect.y + 2, end - 0.5f, collapseRect.yMax - 2), Styles.WhiteTexture);
-                    }
+                    var start = TimelineGraphAsset.TimeToPos(clip.StartTime);
+                    var end = TimelineGraphAsset.TimeToPos(clip.EndTime);
+                    GUI.DrawTexture(
+                        Rect.MinMaxRect(start + 0.5f, collapseRect.y + 2, end - 0.5f, collapseRect.yMax - 2),
+                        Styles.WhiteTexture);
                 }
 
                 GUI.color = Color.white;
                 return;
             }
 
-            for (int t = 0; t < groupAsset.Tracks.Count; t++)
+            for (var t = 0; t < groupAsset.Tracks.Count; t++)
             {
                 var track = groupAsset.Tracks[t];
                 ShowTrackArea(track, groupIndex, t, e, ref nextYPos);
@@ -1021,13 +933,14 @@ namespace MMDarkness.Editor
             }
         }
 
-        void ShowTrackArea(TrackAsset trackAsset, int groupIndex, int trackIndex, Event e, ref float nextYPos)
+        private void ShowTrackArea(TrackAsset trackAsset, int groupIndex, int trackIndex, Event e, ref float nextYPos)
         {
             var yPos = nextYPos;
 
             var trackPosRect =
                 Rect.MinMaxRect(
-                    Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), TimelineGraphAsset.TimeToPos(trackAsset.StartTime)), yPos,
+                    Mathf.Max(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin),
+                        TimelineGraphAsset.TimeToPos(trackAsset.StartTime)), yPos,
                     TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMax), yPos + trackAsset.ShowHeight);
 
             nextYPos += trackAsset.ShowHeight + Styles.TrackMargins;
@@ -1036,19 +949,20 @@ namespace MMDarkness.Editor
             GUI.color = Color.black.WithAlpha(isProSkin ? 0.06f : 0.1f);
             GUI.DrawTexture(trackPosRect, Styles.WhiteTexture);
             Handles.color = ColorUtility.Grey(isProSkin ? 0.15f : 0.4f);
-            Handles.DrawLine(new Vector2(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.y + 1),
+            Handles.DrawLine(
+                new Vector2(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.y + 1),
                 new Vector2(trackPosRect.xMax, trackPosRect.y + 1));
-            Handles.DrawLine(new Vector2(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.yMax),
+            Handles.DrawLine(
+                new Vector2(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.yMax),
                 new Vector2(trackPosRect.xMax, trackPosRect.yMax));
 
             Handles.color = Color.white;
             if (TimelineGraphAsset.ViewTimeMin < 0)
-            {
                 //just visual clarity
                 GUI.Box(
-                    Rect.MinMaxRect(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.yMin, TimelineGraphAsset.TimeToPos(0),
+                    Rect.MinMaxRect(TimelineGraphAsset.TimeToPos(TimelineGraphAsset.ViewTimeMin), trackPosRect.yMin,
+                        TimelineGraphAsset.TimeToPos(0),
                         trackPosRect.yMax), string.Empty);
-            }
 
             // Debug.Log($"track.parent={track.parent}");
             if (trackAsset.StartTime > trackAsset.Parent.StartTime || trackAsset.EndTime < trackAsset.Parent.EndTime)
@@ -1058,7 +972,8 @@ namespace MMDarkness.Editor
                 if (trackAsset.StartTime > trackAsset.Parent.StartTime)
                 {
                     var tStart = TimelineGraphAsset.TimeToPos(trackAsset.StartTime);
-                    var r = Rect.MinMaxRect(TimelineGraphAsset.TimeToPos(0), yPos, tStart, yPos + trackAsset.ShowHeight);
+                    var r = Rect.MinMaxRect(TimelineGraphAsset.TimeToPos(0), yPos, tStart,
+                        yPos + trackAsset.ShowHeight);
                     GUI.DrawTexture(r, Styles.WhiteTexture);
                     GUI.DrawTextureWithTexCoords(r, Styles.Stripes, new Rect(0, 0, r.width / 7, r.height / 7));
                     var a = new Vector2(tStart, trackPosRect.yMin);
@@ -1069,7 +984,8 @@ namespace MMDarkness.Editor
                 if (trackAsset.EndTime < trackAsset.Parent.EndTime)
                 {
                     var tEnd = TimelineGraphAsset.TimeToPos(trackAsset.EndTime);
-                    var r = Rect.MinMaxRect(tEnd, yPos, TimelineGraphAsset.TimeToPos(TimelineGraphAsset.Length), yPos + trackAsset.ShowHeight);
+                    var r = Rect.MinMaxRect(tEnd, yPos, TimelineGraphAsset.TimeToPos(TimelineGraphAsset.Length),
+                        yPos + trackAsset.ShowHeight);
                     GUI.DrawTexture(r, Styles.WhiteTexture);
                     GUI.DrawTextureWithTexCoords(r, Styles.Stripes, new Rect(0, 0, r.width / 7, r.height / 7));
                     var a = new Vector2(tEnd, trackPosRect.yMin);
@@ -1092,16 +1008,11 @@ namespace MMDarkness.Editor
             }
 
             if (trackAsset.IsLocked)
-            {
                 if (e.isMouse && trackPosRect.Contains(e.mousePosition))
-                {
                     e.Use();
-                }
-            }
 
 
             if (!trackAsset.IsActive || trackAsset.IsLocked)
-            {
                 postWindowsGUI += () =>
                 {
                     //overlay dark stripes for disabled tracks
@@ -1110,7 +1021,7 @@ namespace MMDarkness.Editor
                         GUI.color = Color.black.WithAlpha(0.2f);
                         GUI.DrawTexture(trackPosRect, Styles.WhiteTexture);
                         GUI.DrawTextureWithTexCoords(trackPosRect, Styles.Stripes,
-                            new Rect(0, 0, (trackPosRect.width / 5), (trackPosRect.height / 5)));
+                            new Rect(0, 0, trackPosRect.width / 5, trackPosRect.height / 5));
                         GUI.color = Color.white;
                     }
 
@@ -1118,7 +1029,8 @@ namespace MMDarkness.Editor
                     if (trackAsset.IsLocked)
                     {
                         GUI.color = Color.black.WithAlpha(0.15f);
-                        GUI.DrawTextureWithTexCoords(trackPosRect, Styles.Stripes, new Rect(0, 0, trackPosRect.width / 20, trackPosRect.height / 20));
+                        GUI.DrawTextureWithTexCoords(trackPosRect, Styles.Stripes,
+                            new Rect(0, 0, trackPosRect.width / 20, trackPosRect.height / 20));
                         GUI.color = Color.white;
                     }
 
@@ -1131,15 +1043,9 @@ namespace MMDarkness.Editor
                         }
                         else
                         {
-                            if (!trackAsset.IsActive)
-                            {
-                                overlayLabel = Lan.Disable;
-                            }
+                            if (!trackAsset.IsActive) overlayLabel = Lan.Disable;
 
-                            if (trackAsset.IsLocked)
-                            {
-                                overlayLabel = Lan.Locked;
-                            }
+                            if (trackAsset.IsLocked) overlayLabel = Lan.Locked;
                         }
 
                         var size = Styles.CenterLabel.CalcSize(new GUIContent(overlayLabel));
@@ -1149,20 +1055,18 @@ namespace MMDarkness.Editor
                         GUI.color = Color.white;
                     }
                 };
-            }
 
             //绘制轨道片段
-            for (int a = 0; a < trackAsset.Clips.Count; a++)
-            {
+            for (var a = 0; a < trackAsset.Clips.Count; a++)
                 ShowClipArea(trackAsset, yPos, groupIndex, trackIndex, a, e);
-            }
 
             var cursorTime = G.SnapTime(TimelineGraphAsset.PosToTime(mousePosition.x));
 
             TrackDraw.DrawTrackContextMenu(trackAsset, e, trackPosRect, cursorTime);
         }
 
-        void ShowClipArea(TrackAsset trackAsset, float nextYPos, int groupIndex, int trackIndex, int clipIndex, Event e)
+        private void ShowClipArea(TrackAsset trackAsset, float nextYPos, int groupIndex, int trackIndex, int clipIndex,
+            Event e)
         {
             var action = trackAsset.Clips[clipIndex];
             var ID = UID(groupIndex, trackIndex, clipIndex);
@@ -1184,7 +1088,8 @@ namespace MMDarkness.Editor
             clipRect.height = trackAsset.ShowHeight;
             //获取动作时间和位置
             var xTime = action.StartTime;
-            if (interactingClip != null && ReferenceEquals(interactingClip.action, action) && interactingClip.isDragging)
+            if (interactingClip != null && ReferenceEquals(interactingClip.action, action) &&
+                interactingClip.isDragging)
             {
                 var mx = e.mousePosition.x - interactingClip.dragOffset;
 
@@ -1205,12 +1110,8 @@ namespace MMDarkness.Editor
                     }
 
                     foreach (var cw in multiSelection)
-                    {
                         if (cw.action != action)
-                        {
                             cw.action.StartTime += delta;
-                        }
-                    }
                 }
 
                 //夹紧和交叉混合之间的其他附近的剪辑
@@ -1230,7 +1131,9 @@ namespace MMDarkness.Editor
                     }
 
                     var preTime = preCursorClip != null ? preCursorClip.EndTime : 0;
-                    var postTime = postCursorClip != null ? postCursorClip.StartTime : TimelineGraphAsset.MaxTime + action.Length;
+                    var postTime = postCursorClip != null
+                        ? postCursorClip.StartTime
+                        : TimelineGraphAsset.MaxTime + action.Length;
 
                     //拖拽夹子时磁铁会断裂
                     if (Prefs.magnetSnapping && !e.control)
@@ -1264,33 +1167,23 @@ namespace MMDarkness.Editor
 
                     //如果可混合，则延长可能的时间
                     if (action.CanCrossBlend(preCursorClip))
-                    {
                         preTime -= Mathf.Min(action.Length / 2, preCursorClip.Length / 2);
-                    }
 
                     if (action.CanCrossBlend(postCursorClip))
-                    {
                         postTime += Mathf.Min(action.Length / 2, postCursorClip.Length / 2);
-                    }
 
                     //合身吗?
-                    if (action.Length > postTime - preTime)
-                    {
-                        xTime = lastTime;
-                    }
+                    if (action.Length > postTime - preTime) xTime = lastTime;
 
                     if (xTime != lastTime)
                     {
                         xTime = Mathf.Clamp(xTime, preTime, postTime - action.Length);
                         //Shift all the next clips along with this one if shift is down
                         if (e.shift)
-                        {
                             foreach (var cw in clipWrappers.Values.Where(c =>
-                                         c.action.Parent == action.Parent && c.action != action && c.action.StartTime > lastTime))
-                            {
+                                         c.action.Parent == action.Parent && c.action != action &&
+                                         c.action.StartTime > lastTime))
                                 cw.action.StartTime += xTime - lastTime;
-                            }
-                        }
                     }
                 }
 
@@ -1308,7 +1201,7 @@ namespace MMDarkness.Editor
             if (!isSelected && !isVisible)
             {
                 //we basicaly "nullify" the rect. Too much trouble to work with nullable rect.
-                clipWrapper.rect = default(Rect);
+                clipWrapper.rect = default;
                 return;
             }
 
@@ -1341,10 +1234,8 @@ namespace MMDarkness.Editor
                         SafeDoAction(() =>
                         {
                             foreach (var act in multiSelection.Select(b => b.action).ToArray())
-                            {
                                 if (act.Parent is TrackAsset parent)
                                     parent.DeleteClip(act);
-                            }
 
                             InitClipWrappers();
                             multiSelection = null;
@@ -1362,7 +1253,8 @@ namespace MMDarkness.Editor
                 if (action is ISubClipContainable subContainable && subContainable.SubClipLength > 0)
                 {
                     menu.AddSeparator("");
-                    menu.AddItem(new GUIContent(Lan.MatchPreviousLoop), false, () => { action.TryMatchPreviousSubClipLoop(); });
+                    menu.AddItem(new GUIContent(Lan.MatchPreviousLoop), false,
+                        () => { action.TryMatchPreviousSubClipLoop(); });
                     menu.AddItem(new GUIContent(Lan.MatchClipLength), false, () => { action.TryMatchSubClipLength(); });
                     menu.AddItem(new GUIContent(Lan.MatchNextLoop), false, () => { action.TryMatchNexSubClipLoop(); });
                 }
@@ -1392,22 +1284,23 @@ namespace MMDarkness.Editor
 
             GUI.color = Color.white;
 
-            var nextPosX = TimelineGraphAsset.TimeToPos(nextClip != null ? nextClip.StartTime : TimelineGraphAsset.ViewTimeMax);
-            var prevPosX = TimelineGraphAsset.TimeToPos(previousClip != null ? previousClip.EndTime : TimelineGraphAsset.ViewTimeMin);
+            var nextPosX =
+                TimelineGraphAsset.TimeToPos(nextClip != null ? nextClip.StartTime : TimelineGraphAsset.ViewTimeMax);
+            var prevPosX =
+                TimelineGraphAsset.TimeToPos(previousClip != null
+                    ? previousClip.EndTime
+                    : TimelineGraphAsset.ViewTimeMin);
             var extRectLeft = Rect.MinMaxRect(prevPosX, clipRect.yMin, clipRect.xMin, clipRect.yMax);
             var extRectRight = Rect.MinMaxRect(clipRect.xMax, clipRect.yMin, nextPosX, clipRect.yMax);
             action.ShowClipGUIExternal(extRectLeft, extRectRight);
 
             //如果剪辑太小，则把说明信息绘制在外部
-            if (clipRect.width <= 20)
-            {
-                GUI.Label(extRectRight, $"<size=9>{action.Info}</size>");
-            }
+            if (clipRect.width <= 20) GUI.Label(extRectRight, $"<size=9>{action.Info}</size>");
         }
 
-        void ShowActionClipWindow(int id, Rect rect)
+        private void ShowActionClipWindow(int id, Rect rect)
         {
-            if (clipWrappers.TryGetValue(id, out ActionClipWrapper wrapper))
+            if (clipWrappers.TryGetValue(id, out var wrapper))
             {
                 GUI.BeginClip(rect);
                 wrapper.OnClipGUI(id);
@@ -1416,43 +1309,50 @@ namespace MMDarkness.Editor
         }
 
         /// <summary>
-        /// 轨道片段包装器
+        ///     轨道片段包装器
         /// </summary>
-        sealed class ActionClipWrapper
+        private sealed class ActionClipWrapper
         {
-            const float CLIP_BLOCK_COLOR_HEIGHT = 4f;
-            const float SCALE_RECT_WIDTH = 5;
+            private const float CLIP_BLOCK_COLOR_HEIGHT = 4f;
+            private const float SCALE_RECT_WIDTH = 5;
 
-            public float dragOffset;
-            public ClipAsset action;
-            public bool isDragging;
-            public bool isScalingStart;
-            public bool isScalingEnd;
-            public bool isControlingBlendIn;
-            public bool isControlingBlendOut;
-
-            public float preScaleStartTime;
-            public float preScaleEndTime;
-
-            public ClipAsset PreviousClipAsset;
-            public ClipAsset NextClipAsset;
-
-            private Event e;
-            private int clipID;
-            private bool isWaitingMouseDrag;
-            private float overlapIn;
-            private float overlapOut;
+            private Rect _rect;
+            public readonly ClipAsset action;
+            private bool allowScale;
             private float blendInPosX;
 
             private float blendOutPosX;
-
-            private float pointerTime;
-            private float snapedPointerTime;
-            private bool allowScale;
-
-            private Rect dragRect;
+            private int clipID;
             private Rect controlRectIn;
             private Rect controlRectOut;
+
+            public float dragOffset;
+
+            private Rect dragRect;
+
+            private Event e;
+            public bool isControlingBlendIn;
+            public bool isControlingBlendOut;
+            public bool isDragging;
+            public bool isScalingEnd;
+            public bool isScalingStart;
+            private bool isWaitingMouseDrag;
+            public ClipAsset NextClipAsset;
+            private float overlapIn;
+            private float overlapOut;
+
+            private float pointerTime;
+            public float preScaleEndTime;
+
+            public float preScaleStartTime;
+
+            public ClipAsset PreviousClipAsset;
+            private float snapedPointerTime;
+
+            public ActionClipWrapper(ClipAsset action)
+            {
+                this.action = action;
+            }
 
             private ActionEditorWindow editor => current;
 
@@ -1462,17 +1362,10 @@ namespace MMDarkness.Editor
                 set => editor.multiSelection = value;
             }
 
-            private Rect _rect;
-
             public Rect rect
             {
                 get => action.IsCollapsed ? default : _rect;
                 set => _rect = value;
-            }
-
-            public ActionClipWrapper(ClipAsset action)
-            {
-                this.action = action;
             }
 
             public void ResetInteraction()
@@ -1492,8 +1385,8 @@ namespace MMDarkness.Editor
 
                 overlapIn = PreviousClipAsset != null ? Mathf.Max(PreviousClipAsset.EndTime - action.StartTime, 0) : 0;
                 overlapOut = NextClipAsset != null ? Mathf.Max(action.EndTime - NextClipAsset.StartTime, 0) : 0;
-                blendInPosX = (action.BlendIn / action.Length) * rect.width;
-                blendOutPosX = ((action.Length - action.BlendOut) / action.Length) * rect.width;
+                blendInPosX = action.BlendIn / action.Length * rect.width;
+                blendOutPosX = (action.Length - action.BlendOut) / action.Length * rect.width;
 
                 pointerTime = editor.TimelineGraphAsset.PosToTime(editor.mousePosition.x);
                 snapedPointerTime = G.SnapTime(pointerTime);
@@ -1514,16 +1407,12 @@ namespace MMDarkness.Editor
                 }
 
                 var wholeRect = new Rect(0, 0, rect.width, rect.height);
-                if (action.IsLocked && e.isMouse && wholeRect.Contains(e.mousePosition))
-                {
-                    e.Use();
-                }
+                if (action.IsLocked && e.isMouse && wholeRect.Contains(e.mousePosition)) e.Use();
 
                 action.ShowClipGUI(wholeRect);
                 if (action is ISubClipContainable subClip)
-                {
-                    DrawUtils.DrawLoopedLines(wholeRect, subClip.SubClipLength / subClip.SubClipSpeed, action.Length, subClip.SubClipOffset);
-                }
+                    DrawUtils.DrawLoopedLines(wholeRect, subClip.SubClipLength / subClip.SubClipSpeed, action.Length,
+                        subClip.SubClipOffset);
 
                 ShowClipBlockColor(wholeRect);
 
@@ -1531,7 +1420,9 @@ namespace MMDarkness.Editor
                 //这种方式避免了在另一边移动剪辑时的问题，但至少在缩放剪辑时保持重叠交互。
                 if (editor.interactingClip == null || !editor.interactingClip.isDragging)
                 {
-                    var overlap = PreviousClipAsset != null ? Mathf.Max(PreviousClipAsset.EndTime - action.StartTime, 0) : 0;
+                    var overlap = PreviousClipAsset != null
+                        ? Mathf.Max(PreviousClipAsset.EndTime - action.StartTime, 0)
+                        : 0;
                     if (overlap > 0)
                     {
                         action.BlendIn = overlap;
@@ -1543,10 +1434,7 @@ namespace MMDarkness.Editor
                 {
                     if (e.button == 0)
                     {
-                        if (dragRect.Contains(e.mousePosition))
-                        {
-                            isWaitingMouseDrag = true;
-                        }
+                        if (dragRect.Contains(e.mousePosition)) isWaitingMouseDrag = true;
 
                         editor.interactingClip = this;
                         editor.CacheMagnetSnapTimes(action);
@@ -1554,27 +1442,18 @@ namespace MMDarkness.Editor
 
                     if (e.control && dragRect.Contains(e.mousePosition))
                     {
-                        if (multiSelection == null)
-                        {
-                            multiSelection = new List<ActionClipWrapper> { this };
-                        }
+                        if (multiSelection == null) multiSelection = new List<ActionClipWrapper> { this };
 
                         if (multiSelection.Contains(this))
-                        {
                             multiSelection.Remove(this);
-                        }
                         else
-                        {
                             multiSelection.Add(this);
-                        }
                     }
                     else
                     {
                         DirectorUtility.SelectedObject = action;
                         if (multiSelection != null && !multiSelection.Select(cw => cw.action).Contains(action))
-                        {
                             multiSelection = null;
-                        }
                     }
                 }
 
@@ -1598,10 +1477,7 @@ namespace MMDarkness.Editor
                 }
                 else if (e.type == EventType.MouseDown)
                 {
-                    if (DirectorUtility.SelectedObject == action)
-                    {
-                        e.Use();
-                    }
+                    if (DirectorUtility.SelectedObject == action) e.Use();
                 }
 
 
@@ -1609,15 +1485,9 @@ namespace MMDarkness.Editor
                 if (rect.width > 20)
                 {
                     var r = new Rect(0, 0, rect.width, rect.height);
-                    if (overlapIn > 0)
-                    {
-                        r.xMin = blendInPosX;
-                    }
+                    if (overlapIn > 0) r.xMin = blendInPosX;
 
-                    if (overlapOut > 0)
-                    {
-                        r.xMax = blendOutPosX;
-                    }
+                    if (overlapOut > 0) r.xMax = blendOutPosX;
 
                     var label = $"<size=10>{action.Info}</size>";
                     GUI.color = Color.black;
@@ -1627,16 +1497,17 @@ namespace MMDarkness.Editor
             }
 
             /// <summary>
-            /// 绘制片段混合图形
+            ///     绘制片段混合图形
             /// </summary>
-            void DrawBlendGraphics()
+            private void DrawBlendGraphics()
             {
                 if (action.BlendIn > 0)
                 {
                     Handles.color = Color.black.WithAlpha(0.5f);
                     Handles.DrawAAPolyLine(2, new Vector2(0, rect.height), new Vector2(blendInPosX, 0));
                     Handles.color = Color.black.WithAlpha(0.3f);
-                    Handles.DrawAAConvexPolygon(new Vector3(0, 0), new Vector3(0, rect.height), new Vector3(blendInPosX, 0));
+                    Handles.DrawAAConvexPolygon(new Vector3(0, 0), new Vector3(0, rect.height),
+                        new Vector3(blendInPosX, 0));
                 }
 
                 if (action.BlendOut > 0 && overlapOut == 0)
@@ -1644,7 +1515,8 @@ namespace MMDarkness.Editor
                     Handles.color = Color.black.WithAlpha(0.5f);
                     Handles.DrawAAPolyLine(2, new Vector2(blendOutPosX, 0), new Vector2(rect.width, rect.height));
                     Handles.color = Color.black.WithAlpha(0.3f);
-                    Handles.DrawAAConvexPolygon(new Vector3(rect.width, 0), new Vector2(blendOutPosX, 0), new Vector2(rect.width, rect.height));
+                    Handles.DrawAAConvexPolygon(new Vector3(rect.width, 0), new Vector2(blendOutPosX, 0),
+                        new Vector2(rect.width, rect.height));
                 }
 
                 if (overlapIn > 0)
@@ -1657,70 +1529,50 @@ namespace MMDarkness.Editor
             }
 
             /// <summary>
-            /// 片段长度控制器
+            ///     片段长度控制器
             /// </summary>
-            void DoEdgeControls()
+            private void DoEdgeControls()
             {
                 var canBlendIn = action.CanBlendIn() && action.Length > 0;
                 var canBlendOut = action.CanBlendOut() && action.Length > 0;
                 if (!isScalingStart && !isScalingEnd && !isControlingBlendIn && !isControlingBlendOut)
                 {
                     if (allowScale || canBlendIn)
-                    {
                         if (controlRectIn.Contains(e.mousePosition))
                         {
                             GUI.DrawTexture(controlRectIn.ExpandBy(0, -2), Styles.WhiteTexture);
                             if (e.type == EventType.MouseDown && e.button == 0)
                             {
-                                if (allowScale && !e.control)
-                                {
-                                    isScalingStart = true;
-                                }
+                                if (allowScale && !e.control) isScalingStart = true;
 
-                                if (canBlendIn && e.control)
-                                {
-                                    isControlingBlendIn = true;
-                                }
+                                if (canBlendIn && e.control) isControlingBlendIn = true;
 
                                 BeginClipAdjust();
                                 e.Use();
                             }
                         }
-                    }
 
                     if (allowScale || canBlendOut)
-                    {
                         if (controlRectOut.Contains(e.mousePosition))
                         {
                             GUI.DrawTexture(controlRectOut.ExpandBy(0, -2), Styles.WhiteTexture);
                             if (e.type == EventType.MouseDown && e.button == 0)
                             {
-                                if (allowScale && !e.control)
-                                {
-                                    isScalingEnd = true;
-                                }
+                                if (allowScale && !e.control) isScalingEnd = true;
 
-                                if (canBlendOut && e.control)
-                                {
-                                    isControlingBlendOut = true;
-                                }
+                                if (canBlendOut && e.control) isControlingBlendOut = true;
 
                                 BeginClipAdjust();
                                 e.Use();
                             }
                         }
-                    }
                 }
 
                 if (isControlingBlendIn)
-                {
                     action.BlendIn = Mathf.Clamp(pointerTime - action.StartTime, 0, action.Length - action.BlendOut);
-                }
 
                 if (isControlingBlendOut)
-                {
                     action.BlendOut = Mathf.Clamp(action.EndTime - pointerTime, 0, action.Length - action.BlendIn);
-                }
 
                 if (isScalingStart)
                 {
@@ -1737,9 +1589,7 @@ namespace MMDarkness.Editor
                     }
 
                     if (action.CanCrossBlend(PreviousClipAsset))
-                    {
                         prevTime -= Mathf.Min(action.Length / 2, PreviousClipAsset.Length / 2);
-                    }
 
                     action.StartTime = snapedPointerTime;
                     action.StartTime = Mathf.Clamp(action.StartTime, prevTime, preScaleEndTime);
@@ -1761,9 +1611,7 @@ namespace MMDarkness.Editor
                     }
 
                     if (action.CanCrossBlend(NextClipAsset))
-                    {
                         nextTime += Mathf.Min(action.Length / 2, NextClipAsset.Length / 2);
-                    }
 
                     action.EndTime = snapedPointerTime;
                     action.EndTime = Mathf.Clamp(action.EndTime, 0, nextTime);
@@ -1795,15 +1643,16 @@ namespace MMDarkness.Editor
             }
 
             /// <summary>
-            /// 显示剪辑的底部色块
+            ///     显示剪辑的底部色块
             /// </summary>
             /// <param name="rect"></param>
-            void ShowClipBlockColor(Rect rect)
+            private void ShowClipBlockColor(Rect rect)
             {
                 var colorAttribute = action.GetType().GetCustomAttribute<ColorAttribute>();
                 if (colorAttribute != null)
                 {
-                    var dopeRect = new Rect(0, rect.height - CLIP_BLOCK_COLOR_HEIGHT, rect.width, CLIP_BLOCK_COLOR_HEIGHT);
+                    var dopeRect = new Rect(0, rect.height - CLIP_BLOCK_COLOR_HEIGHT, rect.width,
+                        CLIP_BLOCK_COLOR_HEIGHT);
                     GUI.color = colorAttribute.Color;
                     GUI.Box(dopeRect, string.Empty, Styles.HeaderBoxStyle);
                     GUI.color = Color.white;

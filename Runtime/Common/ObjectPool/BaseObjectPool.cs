@@ -6,19 +6,26 @@ namespace MMDarkness
     {
         protected Stack<T> unusedObjects;
 
-        public int UnusedCount
-        {
-            get { return unusedObjects.Count; }
-        }
-
         public BaseObjectPool()
         {
-            this.unusedObjects = new Stack<T>();
+            unusedObjects = new Stack<T>();
         }
+
+        public int UnusedCount => unusedObjects.Count;
 
         object IObjectPool.Spawn()
         {
             return Spawn();
+        }
+
+        void IObjectPool.Recycle(object unit)
+        {
+            Recycle(unit as T);
+        }
+
+        public void Dispose()
+        {
+            while (unusedObjects.Count > 0) OnDestroy(unusedObjects.Pop());
         }
 
         /// <summary> 生成 </summary>
@@ -33,24 +40,11 @@ namespace MMDarkness
             return unit;
         }
 
-        void IObjectPool.Recycle(object unit)
-        {
-            Recycle(unit as T);
-        }
-
         /// <summary> 回收 </summary>
         public void Recycle(T unit)
         {
             unusedObjects.Push(unit);
             OnRecycle(unit);
-        }
-
-        public void Dispose()
-        {
-            while (unusedObjects.Count > 0)
-            {
-                OnDestroy(unusedObjects.Pop());
-            }
         }
 
         protected abstract T Create();

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace MMDarkness.Editor
@@ -24,15 +20,13 @@ namespace MMDarkness.Editor
 
         public static TimelineGraphAsset GraphAsset { get; set; }
 
-        private static TimelineGraphPreviewProcessor _timelineGraphPreviewProcessor;
-
         public static void OnObjectPickerConfig(Object obj)
         {
             if (obj is TimelineGraphAsset a)
             {
                 GraphAsset = a;
                 GraphAsset.Validate();
-                _timelineGraphPreviewProcessor = new TimelineGraphPreviewProcessor(GraphAsset);
+                Player = new TimelineGraphPreviewProcessor(GraphAsset);
             }
         }
 
@@ -45,25 +39,21 @@ namespace MMDarkness.Editor
 
         #region AutoSave
 
-        private static DateTime m_lastSaveTime = DateTime.Now;
-        public static DateTime LastSaveTime => m_lastSaveTime;
+        public static DateTime LastSaveTime { get; private set; } = DateTime.Now;
 
 
         /// <summary>
-        /// 尝试自动保存
+        ///     尝试自动保存
         /// </summary>
         public static void TryAutoSave()
         {
-            var timespan = DateTime.Now - m_lastSaveTime;
-            if (timespan.Seconds > Prefs.autoSaveSeconds)
-            {
-                AutoSave();
-            }
+            var timespan = DateTime.Now - LastSaveTime;
+            if (timespan.Seconds > Prefs.autoSaveSeconds) AutoSave();
         }
 
         public static void AutoSave()
         {
-            m_lastSaveTime = DateTime.Now;
+            LastSaveTime = DateTime.Now;
             SaveAsset();
         }
 
@@ -71,7 +61,7 @@ namespace MMDarkness.Editor
 
         #region 播放相关
 
-        public static TimelineGraphPreviewProcessor Player => _timelineGraphPreviewProcessor;
+        public static TimelineGraphPreviewProcessor Player { get; private set; }
 
 
         public static GameObject Owner
@@ -80,7 +70,9 @@ namespace MMDarkness.Editor
             set => Player.Owner = value;
         }
 
-        public static bool IsStop => Application.isPlaying ? Player.IsPaused || !Player.IsActive : EditorPlaybackState == EditorPlaybackState.Stopped;
+        public static bool IsStop => Application.isPlaying
+            ? Player.IsPaused || !Player.IsActive
+            : EditorPlaybackState == EditorPlaybackState.Stopped;
 
         internal static EditorPlaybackState EditorPlaybackState = EditorPlaybackState.Stopped;
 
@@ -95,10 +87,7 @@ namespace MMDarkness.Editor
 
         private static void Play(EditorPlaybackState playbackState, Action callback = null)
         {
-            if (Application.isPlaying)
-            {
-                return;
-            }
+            if (Application.isPlaying) return;
 
             EditorPlaybackState = playbackState;
             OnPlay?.Invoke();

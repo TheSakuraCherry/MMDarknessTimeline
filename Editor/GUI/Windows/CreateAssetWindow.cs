@@ -39,10 +39,7 @@ namespace MMDarkness.Editor
             _createName = EditorGUILayout.TextField(new GUIContent(Lan.CrateAssetName, Lan.CreateAssetFileName),
                 _createName);
             GUI.backgroundColor = new Color(1, 0.5f, 0.5f);
-            if (GUILayout.Button(new GUIContent(Lan.CreateAssetConfirm)))
-            {
-                CreateConfirm();
-            }
+            if (GUILayout.Button(new GUIContent(Lan.CreateAssetConfirm))) CreateConfirm();
 
             GUI.backgroundColor = Color.white;
             if (GUILayout.Button(new GUIContent(Lan.CreateAssetReset)))
@@ -54,7 +51,7 @@ namespace MMDarkness.Editor
             GUILayout.EndVertical();
         }
 
-        void CreateConfirm()
+        private void CreateConfirm()
         {
             var path = $"{Prefs.savePath}/{_createName}.asset";
             if (string.IsNullOrEmpty(_createName))

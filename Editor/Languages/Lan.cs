@@ -8,71 +8,6 @@ namespace MMDarkness.Editor
 {
     internal class Lan
     {
-        #region 静态
-        public static readonly Dictionary<string, Type> AllLanguages = new();
-        private static string m_lan;
-
-        internal static void Load()
-        {
-            var lan = EditorPrefs.GetString("NBC.Editor.Lan", string.Empty);
-            var types = ReflectionTools.GetImplementationsOf(typeof(ILanguages));
-            foreach (var t in types)
-            {
-                var nameAtt = (NameAttribute)t.GetCustomAttributes(typeof(NameAttribute), false).FirstOrDefault();
-                var name = nameAtt != null ? nameAtt.Name : t.Name.SplitCamelCase();
-                AllLanguages[name] = t;
-                if (string.IsNullOrEmpty(lan) && t == typeof(LanCHS))
-                {
-                    lan = name;
-                }
-            }
-
-            m_lan = lan;
-            ChangeLanguage();
-        }
-
-        public static string Language => m_lan;
-
-        internal static void SetLanguage(string key)
-        {
-            if (AllLanguages.TryGetValue(key, out var type))
-            {
-                m_lan = key;
-                EditorPrefs.SetString("NBC.Editor.Lan", key);
-                ChangeLanguage();
-            }
-        }
-
-        private static void ChangeLanguage()
-        {
-            if (!AllLanguages.TryGetValue(m_lan, out var type)) return;
-            var properties = type.GetProperties();
-            foreach (var property in properties)
-            {
-                Debug.Log($"property = {property.Name}");
-            }
-
-            var fields = type.GetFields();
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            foreach (var field in fields)
-            {
-                dictionary[field.Name] = field.GetValue(null).ToString();
-            }
-
-            var defType = typeof(Lan);
-            var defFields = defType.GetFields();
-            foreach (var field in defFields)
-            {
-                var name = field.Name;
-                if (dictionary.TryGetValue(name, out var value))
-                {
-                    field.SetValue(null, value);
-                }
-            }
-        }
-        #endregion
-
-
         //**********  Welcome *********
         public static string Title = "行为时间轴编辑器";
         public static string CreateAsset = "创建时间轴";
@@ -169,5 +104,58 @@ namespace MMDarkness.Editor
         public static string OverflowInvalid = "剪辑超出有效范围";
         public static string EndTimeOverflowInvalid = "剪辑结束时间超出有效范围";
         public static string StartTimeOverflowInvalid = "剪辑开始时间超出可播放范围";
+
+        #region 静态
+
+        public static readonly Dictionary<string, Type> AllLanguages = new();
+
+        internal static void Load()
+        {
+            var lan = EditorPrefs.GetString("NBC.Editor.Lan", string.Empty);
+            var types = ReflectionTools.GetImplementationsOf(typeof(ILanguages));
+            foreach (var t in types)
+            {
+                var nameAtt = (NameAttribute)t.GetCustomAttributes(typeof(NameAttribute), false).FirstOrDefault();
+                var name = nameAtt != null ? nameAtt.Name : t.Name.SplitCamelCase();
+                AllLanguages[name] = t;
+                if (string.IsNullOrEmpty(lan) && t == typeof(LanCHS)) lan = name;
+            }
+
+            Language = lan;
+            ChangeLanguage();
+        }
+
+        public static string Language { get; private set; }
+
+        internal static void SetLanguage(string key)
+        {
+            if (AllLanguages.TryGetValue(key, out var type))
+            {
+                Language = key;
+                EditorPrefs.SetString("NBC.Editor.Lan", key);
+                ChangeLanguage();
+            }
+        }
+
+        private static void ChangeLanguage()
+        {
+            if (!AllLanguages.TryGetValue(Language, out var type)) return;
+            var properties = type.GetProperties();
+            foreach (var property in properties) Debug.Log($"property = {property.Name}");
+
+            var fields = type.GetFields();
+            var dictionary = new Dictionary<string, string>();
+            foreach (var field in fields) dictionary[field.Name] = field.GetValue(null).ToString();
+
+            var defType = typeof(Lan);
+            var defFields = defType.GetFields();
+            foreach (var field in defFields)
+            {
+                var name = field.Name;
+                if (dictionary.TryGetValue(name, out var value)) field.SetValue(null, value);
+            }
+        }
+
+        #endregion
     }
 }

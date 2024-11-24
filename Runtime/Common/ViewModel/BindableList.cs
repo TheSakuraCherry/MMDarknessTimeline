@@ -6,27 +6,19 @@ namespace MMDarkness
 {
     public class BindableList<T> : BindableProperty<List<T>>, IList<T>
     {
-        public event Action onAdded;
-        public event Action<int> onInserted;
-        public event Action<T> onRemoved;
-        public event Action<int> onItemChanged;
-        public event Action onClear;
+        public BindableList(Func<List<T>> getter, Action<List<T>> setter) : base(getter, setter)
+        {
+        }
 
         public T this[int index]
         {
-            get { return Value[index]; }
-            set { SetItem(index, value); }
-        }
-        public int Count
-        {
-            get { return Value.Count; }
-        }
-        public bool IsReadOnly
-        {
-            get { return false; }
+            get => Value[index];
+            set => SetItem(index, value);
         }
 
-        public BindableList(Func<List<T>> getter, Action<List<T>> setter) : base(getter, setter) { }
+        public int Count => Value.Count;
+
+        public bool IsReadOnly => false;
 
         public void Add(T item)
         {
@@ -47,6 +39,7 @@ namespace MMDarkness
                 onRemoved?.Invoke(item);
                 return true;
             }
+
             return false;
         }
 
@@ -54,12 +47,6 @@ namespace MMDarkness
         {
             Value.Clear();
             onClear?.Invoke();
-        }
-
-        protected void SetItem(int index, T item)
-        {
-            Value[index] = item;
-            onItemChanged?.Invoke(index);
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -79,7 +66,7 @@ namespace MMDarkness
 
         public void RemoveAt(int index)
         {
-            T v = Value[index];
+            var v = Value[index];
             Remove(Value[index]);
             onRemoved?.Invoke(v);
         }
@@ -92,6 +79,18 @@ namespace MMDarkness
         public void CopyTo(T[] array, int arrayIndex)
         {
             Value.CopyTo(array, arrayIndex);
+        }
+
+        public event Action onAdded;
+        public event Action<int> onInserted;
+        public event Action<T> onRemoved;
+        public event Action<int> onItemChanged;
+        public event Action onClear;
+
+        protected void SetItem(int index, T item)
+        {
+            Value[index] = item;
+            onItemChanged?.Invoke(index);
         }
     }
 }

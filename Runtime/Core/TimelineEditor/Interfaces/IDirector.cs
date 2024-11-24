@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace MMDarkness
+﻿namespace MMDarkness
 {
     public interface IDirector : IData
     {

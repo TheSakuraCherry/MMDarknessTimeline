@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEngine;
 
 namespace MMDarkness.Editor
 {
@@ -21,10 +20,7 @@ namespace MMDarkness.Editor
         protected void ShowCommonInspector(bool showBaseInspector = true)
         {
             action.Name = EditorGUILayout.TextField("Name", action.Name);
-            if (showBaseInspector)
-            {
-                base.OnInspectorGUI();
-            }
+            if (showBaseInspector) base.OnInspectorGUI();
         }
     }
 }

@@ -4,11 +4,13 @@ namespace MMDarkness
 {
     public static class ColorUtility
     {
-        public static Color Grey(float value) {
+        public static Color Grey(float value)
+        {
             return new Color(value, value, value);
         }
 
-        public static Color WithAlpha(this Color color, float alpha) {
+        public static Color WithAlpha(this Color color, float alpha)
+        {
             color.a = alpha;
             return color;
         }

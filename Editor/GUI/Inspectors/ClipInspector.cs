@@ -23,34 +23,27 @@ namespace MMDarkness.Editor
             ShowErrors();
             ShowInOutControls();
             ShowBlendingControls();
-            if (showBaseInspector)
-            {
-                base.OnInspectorGUI();
-            }
+            if (showBaseInspector) base.OnInspectorGUI();
         }
 
-        void ShowErrors()
+        private void ShowErrors()
         {
             if (m_clip.IsValid) return;
             EditorGUILayout.HelpBox("该剪辑无效。 请确保设置了所需的参数。", MessageType.Error);
             GUILayout.Space(5);
         }
 
-        void ShowInOutControls()
+        private void ShowInOutControls()
         {
             var previousClip = m_clip.GetPreviousSibling();
             var previousTime = previousClip ? previousClip.EndTime : m_clip.Parent.StartTime;
             if (m_clip.CanCrossBlend(previousClip))
-            {
                 previousTime -= Mathf.Min(m_clip.Length / 2, (previousClip.EndTime - previousClip.StartTime) / 2);
-            }
 
             var nextClip = m_clip.GetNextSibling();
             var nextTime = nextClip != null ? nextClip.StartTime : m_clip.Parent.EndTime;
             if (m_clip.CanCrossBlend(nextClip))
-            {
                 nextTime += Mathf.Min(m_clip.Length / 2, (nextClip.EndTime - nextClip.StartTime) / 2);
-            }
 
             var canScale = m_clip.CanScale();
             var doFrames = Prefs.timeStepMode == Prefs.TimeStepMode.Frames;
@@ -69,7 +62,7 @@ namespace MMDarkness.Editor
                 {
                     _in *= Prefs.frameRate;
                     _in = EditorGUILayout.DelayedIntField((int)_in, GUILayout.Width(80));
-                    _in *= (1f / Prefs.frameRate);
+                    _in *= 1f / Prefs.frameRate;
                 }
                 else
                 {
@@ -82,7 +75,7 @@ namespace MMDarkness.Editor
                 {
                     _length *= Prefs.frameRate;
                     _length = EditorGUILayout.DelayedIntField((int)_length, GUILayout.Width(80));
-                    _length *= (1f / Prefs.frameRate);
+                    _length *= 1f / Prefs.frameRate;
                 }
                 else
                 {
@@ -97,7 +90,7 @@ namespace MMDarkness.Editor
                 {
                     _out *= Prefs.frameRate;
                     _out = EditorGUILayout.DelayedIntField((int)_out, GUILayout.Width(80));
-                    _out *= (1f / Prefs.frameRate);
+                    _out *= 1f / Prefs.frameRate;
                 }
                 else
                 {
@@ -132,10 +125,7 @@ namespace MMDarkness.Editor
 
             if (GUI.changed)
             {
-                if (_length != m_clip.Length)
-                {
-                    _out = _in + _length;
-                }
+                if (_length != m_clip.Length) _out = _in + _length;
 
                 _in = Mathf.Round(_in / Prefs.snapInterval) * Prefs.snapInterval;
                 _out = Mathf.Round(_out / Prefs.snapInterval) * Prefs.snapInterval;
@@ -154,9 +144,7 @@ namespace MMDarkness.Editor
             else
             {
                 if (_out > m_clip.Parent.EndTime)
-                {
                     EditorGUILayout.HelpBox(Lan.EndTimeOverflowInvalid, MessageType.Warning);
-                }
             }
 
             if (_out < m_clip.Parent.StartTime)
@@ -166,18 +154,16 @@ namespace MMDarkness.Editor
             else
             {
                 if (_in < m_clip.Parent.StartTime)
-                {
                     EditorGUILayout.HelpBox(Lan.StartTimeOverflowInvalid, MessageType.Warning);
-                }
             }
 
             GUILayout.EndVertical();
         }
 
         /// <summary>
-        /// 显示混合输入/输出控件
+        ///     显示混合输入/输出控件
         /// </summary>
-        void ShowBlendingControls()
+        private void ShowBlendingControls()
         {
             var canBlendIn = m_clip.CanBlendIn();
             var canBlendOut = m_clip.CanBlendOut();

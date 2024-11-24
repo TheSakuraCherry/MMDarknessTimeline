@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -29,18 +30,17 @@ namespace MMDarkness.Editor
         {
             var t = type;
             //得到字段的值,只能得到public类型的字典的值
-            FieldInfo[] fieldInfos = t.GetFields();
+            var fieldInfos = t.GetFields();
             //排序一下，子类的字段在后，父类的在前
             Array.Sort(fieldInfos, FieldsSprtBy);
 
             //判断需要过滤不显示的字段
-            List<FieldInfo> needShowField = new List<FieldInfo>();
+            var needShowField = new List<FieldInfo>();
             foreach (var field in fieldInfos)
             {
                 var need = true;
                 var attributes = field.GetCustomAttributes();
                 foreach (var attribute in attributes)
-                {
                     if (attribute is OptionRelateParamAttribute option)
                     {
                         var relate = Array.Find(fieldInfos, f1 => f1.Name == option.ArgsName);
@@ -55,18 +55,11 @@ namespace MMDarkness.Editor
                             }
                         }
                     }
-                }
 
-                if (need)
-                {
-                    needShowField.Add(field);
-                }
+                if (need) needShowField.Add(field);
             }
 
-            foreach (var field in needShowField)
-            {
-                FieldDefaultInspector(field, m_target);
-            }
+            foreach (var field in needShowField) FieldDefaultInspector(field, m_target);
         }
 
         protected void FieldDefaultInspector(FieldInfo field, object target)
@@ -77,9 +70,9 @@ namespace MMDarkness.Editor
             var newValue = value;
 
             //首字母大写
-            var name = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(field.Name);
+            var name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(field.Name);
 
-            List<object> args = new List<object>();
+            var args = new List<object>();
 
             var attributes = field.GetCustomAttributes();
             foreach (var attribute in attributes)
@@ -136,11 +129,8 @@ namespace MMDarkness.Editor
             }
             else if (showType == typeof(AnimationCurve))
             {
-                AnimationCurve curve = field.GetValue(target) as AnimationCurve;
-                if (curve == null)
-                {
-                    curve = new AnimationCurve();
-                }
+                var curve = field.GetValue(target) as AnimationCurve;
+                if (curve == null) curve = new AnimationCurve();
 
                 newValue = EditorGUILayout.CurveField(name, curve);
             }
@@ -179,9 +169,7 @@ namespace MMDarkness.Editor
             else if (showType == typeof(RangeAttribute))
             {
                 if (fieldType == typeof(float))
-                {
                     newValue = EditorGUILayout.Slider(name, (float)value, (float)args[0], (float)args[1]);
-                }
             }
             else if (showType == typeof(OptionParamAttribute))
             {
@@ -209,16 +197,10 @@ namespace MMDarkness.Editor
                 {
                     Object obj = null;
                     var path = value.ToString();
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        obj = AssetDatabase.LoadAssetAtPath(path, type);
-                    }
+                    if (!string.IsNullOrEmpty(path)) obj = AssetDatabase.LoadAssetAtPath(path, type);
 
                     var newObj = EditorGUILayout.ObjectField(name, obj, type, false);
-                    if (newObj != obj)
-                    {
-                        newValue = AssetDatabase.GetAssetPath(newObj);
-                    }
+                    if (newObj != obj) newValue = AssetDatabase.GetAssetPath(newObj);
                 }
             }
             else if (showType == typeof(Clip))
@@ -239,10 +221,7 @@ namespace MMDarkness.Editor
             var e2 = f2.DeclaringType == f2.ReflectedType;
             if (e1 != e2)
             {
-                if (e1)
-                {
-                    return 1;
-                }
+                if (e1) return 1;
 
                 return -1;
             }
@@ -256,15 +235,9 @@ namespace MMDarkness.Editor
             var sort2 = f2.GetCustomAttribute<OptionSortAttribute>();
             var i1 = 99;
             var i2 = 99;
-            if (sort1 != null)
-            {
-                i1 = sort1.Sort;
-            }
+            if (sort1 != null) i1 = sort1.Sort;
 
-            if (sort2 != null)
-            {
-                i2 = sort2.Sort;
-            }
+            if (sort2 != null) i2 = sort2.Sort;
 
             return i1 - i2;
         }

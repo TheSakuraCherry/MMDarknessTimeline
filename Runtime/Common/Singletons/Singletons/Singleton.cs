@@ -5,43 +5,36 @@ namespace MMDarkness
     [Serializable]
     public abstract class Singleton<T> : ISingleton where T : Singleton<T>
     {
-        #region Static
-
-        private static T instance;
-
-        public static T Instance
-        {
-            get { return instance; }
-        }
-
-        public static bool IsInitialized()
-        {
-            return instance != null;
-        }
-
-        #endregion
-
-        private bool isDisposed;
-
-        public bool IsDisposed => this.isDisposed;
+        public bool IsDisposed { get; private set; }
 
         public void Register()
         {
-            if (instance != null)
+            if (Instance != null)
                 throw new Exception($"singleton register twice! {typeof(T).Name}");
 
-            instance = (T)this;
+            Instance = (T)this;
         }
 
         public void Dispose()
         {
-            if (this.isDisposed)
+            if (IsDisposed)
                 return;
 
-            this.isDisposed = true;
-            if (instance is ISingletonDestory iSingletonDestory)
+            IsDisposed = true;
+            if (Instance is ISingletonDestory iSingletonDestory)
                 iSingletonDestory.Destroy();
-            instance = null;
+            Instance = null;
         }
+
+        #region Static
+
+        public static T Instance { get; private set; }
+
+        public static bool IsInitialized()
+        {
+            return Instance != null;
+        }
+
+        #endregion
     }
 }

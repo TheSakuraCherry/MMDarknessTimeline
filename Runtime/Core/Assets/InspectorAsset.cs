@@ -1,5 +1,4 @@
 ﻿using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 
 namespace MMDarkness
 {

@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MMDarkness
 {
     public abstract class DirectableAsset : ScriptableObject, IData
     {
-        [SerializeField, HideInInspector]
-        internal DirectableAsset m_parent;
+        [SerializeField] [HideInInspector] internal DirectableAsset m_parent;
 
         public abstract TimelineGraphAsset Root { get; set; }
         public abstract DirectableAsset Parent { get; set; }

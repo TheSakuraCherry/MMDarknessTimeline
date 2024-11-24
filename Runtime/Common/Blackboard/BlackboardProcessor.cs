@@ -14,7 +14,7 @@ namespace MMDarkness
     {
         public object value;
         public NotifyType notifyType;
-        
+
         public BBEventArg(object value, NotifyType notifyType)
         {
             this.value = value;
@@ -24,11 +24,11 @@ namespace MMDarkness
 
     public class BlackboardProcessor<TKey> : IBlackboard<TKey>
     {
+        private readonly List<KeyValuePair<TKey, Action<BBEventArg>>> addObservers;
         public Blackboard<TKey> blackboard;
         public Events<TKey> events;
-        private List<KeyValuePair<TKey, Action<BBEventArg>>> addObservers;
-        private List<KeyValuePair<TKey, Action<BBEventArg>>> removeObservers;
         private bool isNotifying;
+        private readonly List<KeyValuePair<TKey, Action<BBEventArg>>> removeObservers;
 
         public BlackboardProcessor(Blackboard<TKey> blackboard) : this(blackboard, new Events<TKey>())
         {
@@ -39,8 +39,8 @@ namespace MMDarkness
             this.blackboard = blackboard;
             this.events = events;
             this.events = new Events<TKey>();
-            this.addObservers = new List<KeyValuePair<TKey, Action<BBEventArg>>>();
-            this.removeObservers = new List<KeyValuePair<TKey, Action<BBEventArg>>>();
+            addObservers = new List<KeyValuePair<TKey, Action<BBEventArg>>>();
+            removeObservers = new List<KeyValuePair<TKey, Action<BBEventArg>>>();
         }
 
         public bool Contains(TKey key)
@@ -79,10 +79,7 @@ namespace MMDarkness
 
         public void Remove(TKey key)
         {
-            if (blackboard.TryGet(key, out var value))
-            {
-                NotifyObservers(key, value, NotifyType.Remove);
-            }
+            if (blackboard.TryGet(key, out var value)) NotifyObservers(key, value, NotifyType.Remove);
 
             blackboard.Remove(key);
         }
@@ -113,15 +110,9 @@ namespace MMDarkness
                 isNotifying = false;
             }
 
-            foreach (var pair in removeObservers)
-            {
-                UnregisterObserver(pair.Key, pair.Value);
-            }
+            foreach (var pair in removeObservers) UnregisterObserver(pair.Key, pair.Value);
 
-            foreach (var pair in addObservers)
-            {
-                RegisterObserver(pair.Key, pair.Value);
-            }
+            foreach (var pair in addObservers) RegisterObserver(pair.Key, pair.Value);
 
             addObservers.Clear();
             removeObservers.Clear();

@@ -6,20 +6,27 @@ namespace MMDarkness
 {
     public class BindableStack<T> : BindableProperty<Stack<T>>, IEnumerable<T>
     {
+        public BindableStack(Func<Stack<T>> getter, Action<Stack<T>> setter) : base(getter, setter)
+        {
+        }
+
+        public int Count => Value.Count;
+
+        public bool IsReadOnly => false;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Value.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Value.GetEnumerator();
+        }
+
         public event Action onPushed;
         public event Action onPoped;
         public event Action onClear;
-
-        public int Count
-        {
-            get { return Value.Count; }
-        }
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
-
-        public BindableStack(Func<Stack<T>> getter, Action<Stack<T>> setter) : base(getter, setter) { }
 
         public void Push(T item)
         {
@@ -48,16 +55,6 @@ namespace MMDarkness
         {
             Value.Clear();
             onClear?.Invoke();
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return Value.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Value.GetEnumerator();
         }
 
         public bool Contains(T item)

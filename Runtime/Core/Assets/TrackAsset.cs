@@ -1,31 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sirenix.Utilities;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MMDarkness
 {
     [Serializable]
     public class TrackAsset : DirectableAsset
     {
-        [SerializeReference, HideInInspector]
-        public Track trackModel;
+        [SerializeReference] [HideInInspector] public Track trackModel;
 
-        [SerializeField, HideInInspector]
-        private List<ClipAsset> clipAssets = new List<ClipAsset>();
+        [SerializeField] [HideInInspector] private List<ClipAsset> clipAssets = new();
 
-        [SerializeField]
-        [HideInInspector]
-        private bool active = true;
+        [SerializeField] [HideInInspector] private bool active = true;
 
-        [SerializeField]
-        [HideInInspector]
-        private bool isLocked = false;
+        [SerializeField] [HideInInspector] private bool isLocked;
 
-        [SerializeField]
-        private Color color = Color.white;
+        [SerializeField] private Color color = Color.white;
+
+        private bool m_cacheSorted;
 
         public Color Color => color.a > 0.1f ? color : Color.white;
 
@@ -78,8 +71,24 @@ namespace MMDarkness
 
         public virtual float ShowHeight => 30f;
 
+        internal bool IsCompilable()
+        {
+            return true;
+        }
+
+        public void SortClips()
+        {
+            if (!m_cacheSorted)
+            {
+                Clips.Sort((clip1, clip2) => clip1.StartTime.CompareTo(clip2.StartTime));
+                foreach (var clip in Clips) clip.clipModel.startTime = clip.StartTime;
+                m_cacheSorted = true;
+            }
+        }
+
 
         #region 增删
+
         public ClipAsset AddClip<T>(float time) where T : Clip
         {
             return AddClip(typeof(T), time);
@@ -87,10 +96,9 @@ namespace MMDarkness
 
         public ClipAsset AddClip(Type type, float time)
         {
-            if (type.GetCustomAttributes(typeof(CategoryAttribute), true).FirstOrDefault() is CategoryAttribute catAtt && Clips.Count == 0)
-            {
-                Name = catAtt.Category + " Track";
-            }
+            if (type.GetCustomAttributes(typeof(CategoryAttribute), true)
+                    .FirstOrDefault() is CategoryAttribute catAtt &&
+                Clips.Count == 0) Name = catAtt.Category + " Track";
 
             var newClip = CreateInstance<ClipAsset>();
 
@@ -101,11 +109,9 @@ namespace MMDarkness
                 newClip.StartTime = time;
                 Clips.Add(newClip);
                 var nextAction = Clips.FirstOrDefault(a => a.StartTime > newClip.StartTime);
-                if (nextAction != null)
-                {
-                    newClip.EndTime = Mathf.Min(newClip.EndTime, nextAction.StartTime);
-                }
+                if (nextAction != null) newClip.EndTime = Mathf.Min(newClip.EndTime, nextAction.StartTime);
             }
+
             CreateUtilities.SaveAssetIntoObject(newClip, this);
             DirectorUtility.SelectedObject = newClip;
             return newClip;
@@ -114,10 +120,7 @@ namespace MMDarkness
         public void DeleteClip(ClipAsset action)
         {
             Clips.Remove(action);
-            if (ReferenceEquals(DirectorUtility.SelectedObject, action))
-            {
-                DirectorUtility.SelectedObject = null;
-            }
+            if (ReferenceEquals(DirectorUtility.SelectedObject, action)) DirectorUtility.SelectedObject = null;
         }
 
         public ClipAsset PasteClip(ClipAsset clipAsset, float time = 0)
@@ -129,10 +132,7 @@ namespace MMDarkness
                 {
                     newClip.StartTime = time;
                     var nextClip = Clips.FirstOrDefault(a => a.StartTime > newClip.StartTime);
-                    if (nextClip != null && newClip.EndTime > nextClip.StartTime)
-                    {
-                        newClip.EndTime = nextClip.StartTime;
-                    }
+                    if (nextClip != null && newClip.EndTime > nextClip.StartTime) newClip.EndTime = nextClip.StartTime;
                 }
 
                 newClip.Parent = this;
@@ -142,26 +142,7 @@ namespace MMDarkness
 
             return newClip;
         }
+
         #endregion
-
-        internal bool IsCompilable()
-        {
-            return true;
-        }
-
-        bool m_cacheSorted;
-
-        public void SortClips()
-        {
-            if (!m_cacheSorted)
-            {
-                Clips.Sort((clip1, clip2) => clip1.StartTime.CompareTo(clip2.StartTime));
-                foreach (var clip in Clips)
-                {
-                    clip.clipModel.startTime = clip.StartTime;
-                }
-                m_cacheSorted = true;
-            }
-        }
     }
 }

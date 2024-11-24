@@ -33,20 +33,20 @@ namespace MMDarkness
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private readonly Dictionary<string, IBindableProperty> bindableProperties = new Dictionary<string, IBindableProperty>();
+        private readonly Dictionary<string, IBindableProperty> bindableProperties = new();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        
         public int Count => bindableProperties.Count;
 
         public IReadOnlyDictionary<string, IBindableProperty> Properties => bindableProperties;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             GetProperty(propertyName)?.NotifyValueChanged();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         public bool Contains(string propertyName)
         {
             return bindableProperties.ContainsKey(propertyName);
@@ -77,20 +77,14 @@ namespace MMDarkness
 
         public IBindableProperty GetProperty(string propertyName)
         {
-            if (!bindableProperties.TryGetValue(propertyName, out var property))
-            {
-                return null;
-            }
+            if (!bindableProperties.TryGetValue(propertyName, out var property)) return null;
 
             return property;
         }
 
         public IBindableProperty<T> GetProperty<T>(string propertyName)
         {
-            if (!bindableProperties.TryGetValue(propertyName, out var property))
-            {
-                return null;
-            }
+            if (!bindableProperties.TryGetValue(propertyName, out var property)) return null;
 
             return property as IBindableProperty<T>;
         }
@@ -112,11 +106,8 @@ namespace MMDarkness
 
         public void UnregisterProperty(string propertyName)
         {
-            if (!bindableProperties.TryGetValue(propertyName,out var property))
-            {
-                return;
-            }
-            
+            if (!bindableProperties.TryGetValue(propertyName, out var property)) return;
+
             property.Dispose();
             bindableProperties.Remove(propertyName);
         }

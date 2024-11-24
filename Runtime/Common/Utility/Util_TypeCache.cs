@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor;
 
 namespace MMDarkness
 {
@@ -41,11 +42,8 @@ namespace MMDarkness
 #if UNITY_EDITOR
         public static IEnumerable<Type> GetTypesWithAttribute(Type attributeType)
         {
-            var types = UnityEditor.TypeCache.GetTypesWithAttribute(attributeType);
-            foreach (var type in types)
-            {
-                yield return type;
-            }
+            var types = TypeCache.GetTypesWithAttribute(attributeType);
+            foreach (var type in types) yield return type;
         }
 
         public static IEnumerable<Type> GetTypesWithAttribute<T>() where T : Attribute
@@ -55,11 +53,8 @@ namespace MMDarkness
 
         public static IEnumerable<Type> GetTypesDerivedFrom(Type parentType)
         {
-            var types = UnityEditor.TypeCache.GetTypesDerivedFrom(parentType);
-            foreach (var type in types)
-            {
-                yield return type;
-            }
+            var types = TypeCache.GetTypesDerivedFrom(parentType);
+            foreach (var type in types) yield return type;
         }
 
         public static IEnumerable<Type> GetTypesDerivedFrom<T>()
@@ -69,11 +64,8 @@ namespace MMDarkness
 
         public static IEnumerable<MethodInfo> GetMethodsWithAttribute(Type attributeType)
         {
-            var methods = UnityEditor.TypeCache.GetMethodsWithAttribute(attributeType);
-            foreach (var method in methods)
-            {
-                yield return method;
-            }
+            var methods = TypeCache.GetMethodsWithAttribute(attributeType);
+            foreach (var method in methods) yield return method;
         }
 
         public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>() where T : Attribute

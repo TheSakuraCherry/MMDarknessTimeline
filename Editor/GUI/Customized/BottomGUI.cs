@@ -13,9 +13,9 @@ namespace MMDarkness.Editor
         }
 
         /// <summary>
-        /// 显示底部滚动信息
+        ///     显示底部滚动信息
         /// </summary>
-        void ShowTimeSlider(Rect rect)
+        private void ShowTimeSlider(Rect rect)
         {
             GUILayout.BeginArea(rect);
             var asset = App.GraphAsset;

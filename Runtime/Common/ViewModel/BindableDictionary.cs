@@ -5,29 +5,20 @@ namespace MMDarkness
 {
     public class BindableDictionary<TKey, TValue> : BindableProperty<Dictionary<TKey, TValue>>
     {
-        public event Action<TKey> OnAdded;
-        public event Action<TKey, TValue> OnItemValueChanged;
-        public event Action<KeyValuePair<TKey, TValue>> OnRemoved;
-        public event Action OnClear;
-
-        public ICollection<TKey> Keys
+        public BindableDictionary(Func<Dictionary<TKey, TValue>> getter, Action<Dictionary<TKey, TValue>> setter) :
+            base(getter, setter)
         {
-            get { return Value.Keys; }
         }
 
-        public ICollection<TValue> Values
-        {
-            get { return Value.Values; }
-        }
+        public ICollection<TKey> Keys => Value.Keys;
 
-        public int Count
-        {
-            get { return Value.Count; }
-        }
+        public ICollection<TValue> Values => Value.Values;
+
+        public int Count => Value.Count;
 
         public TValue this[TKey key]
         {
-            get { return Value[key]; }
+            get => Value[key];
             set
             {
                 if (Value.ContainsKey(key))
@@ -44,8 +35,10 @@ namespace MMDarkness
         }
 
         public bool IsReadOnly => false;
-
-        public BindableDictionary(Func<Dictionary<TKey, TValue>> getter, Action<Dictionary<TKey, TValue>> setter) : base(getter, setter) { }
+        public event Action<TKey> OnAdded;
+        public event Action<TKey, TValue> OnItemValueChanged;
+        public event Action<KeyValuePair<TKey, TValue>> OnRemoved;
+        public event Action OnClear;
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {

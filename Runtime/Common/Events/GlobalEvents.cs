@@ -19,7 +19,7 @@ namespace MMDarkness
     {
         public K EvtName { get; }
     }
-    
+
     public class EvtTask<K> : IEvtTask<K>
     {
         public K evtName;
@@ -29,12 +29,12 @@ namespace MMDarkness
 
     public class EvtTask<K, A> : IEvtTask<K>
     {
-        public K evtName;
         public A arg;
-
-        public K EvtName => evtName;
+        public K evtName;
         public Type ArgType => typeof(A);
         public A Arg => arg;
+
+        public K EvtName => evtName;
     }
 
     public partial class GlobalEvents
@@ -49,43 +49,25 @@ namespace MMDarkness
 
         public static void Init(bool force = false)
         {
-            if (!force && s_Initialized)
-            {
-                return;
-            }
+            if (!force && s_Initialized) return;
 
             if (s_AllGlobalEvents == null)
-            {
                 s_AllGlobalEvents = new Dictionary<Type, List<IGlobalEvent>>(128);
-            }
             else
-            {
                 s_AllGlobalEvents.Clear();
-            }
 
             foreach (var type in Util_TypeCache.GetTypesDerivedFrom<IGlobalEvent>())
             {
-                if (type.IsAbstract)
-                {
-                    continue;
-                }
+                if (type.IsAbstract) continue;
 
-                if (!type.IsClass)
-                {
-                    continue;
-                }
+                if (!type.IsClass) continue;
 
                 var evt = Activator.CreateInstance(type) as IGlobalEvent;
-                if (evt == null)
-                {
-                    continue;
-                }
+                if (evt == null) continue;
 
                 var evtType = evt.EventType;
                 if (!s_AllGlobalEvents.TryGetValue(evtType, out var evts))
-                {
                     s_AllGlobalEvents[evtType] = evts = new List<IGlobalEvent>();
-                }
 
                 evts.Add(evt);
             }
@@ -96,49 +78,38 @@ namespace MMDarkness
         public static void Publish<A>(A arg) where A : struct
         {
             var evtType = typeof(A);
-            if (!s_AllGlobalEvents.TryGetValue(evtType, out var evts))
-            {
-                return;
-            }
+            if (!s_AllGlobalEvents.TryGetValue(evtType, out var evts)) return;
 
-            foreach (var evt in evts)
-            {
-                (evt as GlobalEvent<A>)?.Handle(arg);
-            }
+            foreach (var evt in evts) (evt as GlobalEvent<A>)?.Handle(arg);
         }
     }
 
     public partial class GlobalEvents : ISingleton
     {
-        private static GlobalEvents s_Instance;
-
-        public static GlobalEvents Instance
-        {
-            get { return s_Instance; }
-        }
-
         private Events<string> events;
+
+        public static GlobalEvents Instance { get; private set; }
 
         public bool IsDisposed { get; private set; }
 
         public void Register()
         {
-            if (s_Instance != null)
+            if (Instance != null)
                 throw new Exception($"singleton register twice! {typeof(Events<string>).Name}");
 
-            s_Instance = this;
+            Instance = this;
             events = new Events<string>();
         }
 
         public void Dispose()
         {
-            if (this.IsDisposed)
+            if (IsDisposed)
                 return;
 
-            this.IsDisposed = true;
-            s_Instance = null;
+            IsDisposed = true;
+            Instance = null;
         }
-        
+
         public void Subscribe<T>(string key, Action<T> handler)
         {
             events.Subscribe(key, handler);
