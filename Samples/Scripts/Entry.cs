@@ -1,27 +1,31 @@
+using System;
 using MMDarkness;
+using Sirenix.Serialization;
 using UnityEngine;
 
 public class Entry : MonoBehaviour
 {
-    public TimelineGraphAsset TimelineGraphAsset;
-
-    public float time;
-
+    public TextAsset textAsset;
     public TimelineGraphProcessor Processor;
 
+    public float time = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
+    void Start()
     {
+        
+        // 获取字节数据
+        byte[] data = textAsset.bytes;
+
         // 反序列化数据到对象
-        var graph = TimelineGraphAsset.GetGraphModel();
+        TimelineGraph graph = SerializationUtility.DeserializeValue<TimelineGraph>(data, DataFormat.Binary);
 
         Processor = new TimelineGraphProcessor(graph);
-        Processor.Play();
+        //Processor.Play();
     }
 
-    public void Update()
-    {
-        time += Time.deltaTime;
-        Processor.Sample(time);
-    }
+    // public void Update()
+    // {
+    //     time += Time.deltaTime;
+    //     Processor.Sample(time);
+    // }
 }
