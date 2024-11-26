@@ -239,4 +239,14 @@ namespace MMDarkness
     public class RequiredAttribute : PropertyAttribute
     {
     }
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ObjectPathSelectorAttribute : Attribute
+    {
+        public Type ObjectType { get; }
+
+        public ObjectPathSelectorAttribute(Type objectType)
+        {
+            ObjectType = objectType; // 指定允许选择的对象类型
+        }
+    }
 }

@@ -27,6 +27,7 @@ namespace MMDarkness
         {
             this.target = target;
             triggered = false;
+            target.Init();
         }
 
 

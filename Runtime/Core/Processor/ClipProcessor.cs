@@ -36,6 +36,11 @@ namespace MMDarkness
         public IDirectable Parent { get; private set; }
         public IEnumerable<IDirectable> Children => Array.Empty<IDirectable>();
 
+        public void Init()
+        {
+            OnInit();
+        }
+
         public void Enter(FrameData frameData, FrameData innerFrameData)
         {
             IsTriggered = true;
@@ -85,6 +90,11 @@ namespace MMDarkness
             Data = clip;
             Root = track.Root;
             Parent = track;
+        }
+
+        protected virtual void OnInit()
+        {
+            
         }
 
         protected virtual void OnEnter(FrameData frameData, FrameData innerFrameData)

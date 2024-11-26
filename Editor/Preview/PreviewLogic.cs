@@ -16,6 +16,11 @@
             Processor = t;
         }
 
+        public virtual void Init()
+        {
+            Processor.Init();
+        }
+
         public virtual void Enter(FrameData frameData, FrameData innerFrameData)
         {
             Processor.Enter(frameData, innerFrameData);

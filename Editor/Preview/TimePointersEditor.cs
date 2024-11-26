@@ -11,6 +11,7 @@
         {
             this.target = target;
             triggered = false;
+            target.Init();
             lastTargetStartTime = target.Directable.StartTime;
         }
 

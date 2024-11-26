@@ -24,6 +24,8 @@ namespace MMDarkness
         public CFloat StartTime { get; }
         public CFloat EndTime { get; }
 
+        void Init();
+
         void Enter(FrameData frameData, FrameData innerFrameData);
 
         void Update(FrameData frameData, FrameData innerFrameData);

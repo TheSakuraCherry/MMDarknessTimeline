@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Animancer;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace MMDarkness
@@ -10,6 +11,8 @@ namespace MMDarkness
     [Attachable(typeof(ATrack))]
     public class AnimancerClip : Clip
     {
-        public AnimationClip Clip;
+        public ClipTransition Clip;
+        [LabelText("过渡时间")]
+        public float BlendTime;
     }
 }
