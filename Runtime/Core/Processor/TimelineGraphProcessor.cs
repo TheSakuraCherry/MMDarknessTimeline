@@ -287,27 +287,34 @@ namespace MMDarkness
             {
                 case StopMode.Exit:
                 {
-                    foreach (var group in groups)
+                    // foreach (var group in groups)
+                    // {
+                    //     if (!group.IsTriggered)
+                    //         continue;
+                    //
+                    //     var frameData = new FrameData
+                    //     {
+                    //         currentTime = CurrentTime,
+                    //         previousTime = PreviousTime,
+                    //         deltaTime = CurrentTime - PreviousTime
+                    //     };
+                    //
+                    //     var localCurrentTime = CMath.Clamp(CurrentTime - group.StartTime, 0, group.Length);
+                    //     var localPreviousTime = CMath.Clamp(PreviousTime - group.StartTime, 0, group.Length);
+                    //
+                    //     var innerframedata = new FrameData
+                    //     {
+                    //         previousTime = localPreviousTime, currentTime = localCurrentTime,
+                    //         deltaTime = localCurrentTime - localPreviousTime
+                    //     };
+                    //     group.Exit(frameData, innerframedata);
+                    // }
+                    foreach (var timePointer in m_timePointers)
                     {
-                        if (!group.IsTriggered)
-                            continue;
-
-                        var frameData = new FrameData
+                        if (timePointer.triggered)
                         {
-                            currentTime = CurrentTime,
-                            previousTime = PreviousTime,
-                            deltaTime = CurrentTime - PreviousTime
-                        };
-
-                        var localCurrentTime = CMath.Clamp(CurrentTime - group.StartTime, 0, group.Length);
-                        var localPreviousTime = CMath.Clamp(PreviousTime - group.StartTime, 0, group.Length);
-
-                        var innerframedata = new FrameData
-                        {
-                            previousTime = localPreviousTime, currentTime = localCurrentTime,
-                            deltaTime = localCurrentTime - localPreviousTime
-                        };
-                        group.Exit(frameData, innerframedata);
+                            timePointer.OnStop(CurrentTime,PreviousTime);
+                        }
                     }
 
                     break;

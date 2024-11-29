@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace MMDarkness.Editor
@@ -14,8 +15,7 @@ namespace MMDarkness.Editor
         private float playTimeMax;
 
         private float playTimeMin;
-
-        private bool preInitialized;
+        
         private List<IDirectableTimePointer> timePointers;
 
         /// <summary>
@@ -26,6 +26,7 @@ namespace MMDarkness.Editor
         public TimelineGraphPreviewProcessor(TimelineGraphAsset asset)
         {
             TimelineGraphAsset = asset;
+            
         }
 
         public float previousTime { get; private set; }
@@ -103,7 +104,7 @@ namespace MMDarkness.Editor
             if ((currentTime == 0 || currentTime == Length) && previousTime == currentTime) return;
             // Debug.Log($"CurrentTime={CurrentTime}");
 
-            if (!preInitialized && currentTime > 0 && previousTime == 0) InitializePreviewPointers();
+            if (currentTime > 0 && previousTime == 0) InitializePreviewPointers();
 
 
             if (timePointers != null) InternalSamplePointers(currentTime, previousTime);
@@ -153,6 +154,8 @@ namespace MMDarkness.Editor
         /// </summary>
         public void InitializePreviewPointers()
         {
+            
+            
             timePointers = new List<IDirectableTimePointer>();
             unsortedStartTimePointers = new List<IDirectableTimePointer>();
 
@@ -225,6 +228,17 @@ namespace MMDarkness.Editor
                         timePointers.Add(new EndTimePreviewPointer(clipPreview));
                     }
                 }
+            }
+        }
+
+        public void OnStop()
+        {
+            
+            if(timePointers.IsNullOrEmpty())
+                return;
+            foreach (var timePointer in timePointers)
+            {
+                timePointer.OnStop(CurrentTime,previousTime);
             }
         }
     }

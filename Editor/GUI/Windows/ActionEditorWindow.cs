@@ -793,8 +793,8 @@ namespace MMDarkness.Editor
                 clipWrappers[id] = wrapper;
                 clipWrappersMap[clip] = wrapper;
             }
-
-            player.InitializePreviewPointers();
+            if(App.IsPlay)
+                player.InitializePreviewPointers();
 
             if (lastTime > 0) player.CurrentTime = lastTime;
         }

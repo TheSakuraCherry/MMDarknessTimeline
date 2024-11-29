@@ -46,5 +46,11 @@
         {
             Processor.Update(frameData, innerFrameData);
         }
+
+        public virtual void OnEditorStop(FrameData frameData, FrameData innerFrameData)
+        {
+            Processor.Exit(frameData, innerFrameData);
+        }
+        
     }
 }

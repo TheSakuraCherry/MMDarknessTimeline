@@ -1,8 +1,10 @@
-﻿namespace MMDarkness.Editor
+﻿using UnityEngine;
+
+namespace MMDarkness.Editor
 {
     public struct StartTimePreviewPointer : IDirectableTimePointer
     {
-        private bool triggered;
+        public bool triggered { get; private set; }
         private float lastTargetStartTime;
         public PreviewLogic target { get; }
         float IDirectableTimePointer.time => target.Directable.StartTime;
@@ -86,11 +88,32 @@
                     target.Reverse(farmedata, innerframedata);
                 }
         }
+        
+        void IDirectableTimePointer.OnStop(float currentTime, float previousTime)
+        {
+            var farmedata = new FrameData
+            {
+                currentTime = currentTime,
+                previousTime = previousTime,
+                deltaTime = currentTime - previousTime
+            };
+            var deltaMoveClip = target.Directable.StartTime - lastTargetStartTime;
+            var localCurrentTime = target.Directable.ToLocalTime(currentTime);
+            var localPreviousTime = target.Directable.ToLocalTime(previousTime + deltaMoveClip);
+
+            var innerframedata = new FrameData
+            {
+                previousTime = localPreviousTime, currentTime = localCurrentTime,
+                deltaTime = localCurrentTime - localPreviousTime
+            };
+            
+            target.OnEditorStop( farmedata, innerframedata);
+        }
     }
 
     public struct EndTimePreviewPointer : IDirectableTimePointer
     {
-        private bool triggered;
+        public bool triggered { get; private set; }
         public PreviewLogic target { get; }
         float IDirectableTimePointer.time => target.Directable.EndTime;
 
@@ -128,6 +151,11 @@
 
         void IDirectableTimePointer.Update(float currentTime, float previousTime)
         {
+        }
+
+        public void OnStop(float currentTime, float previousTime)
+        {
+            
         }
 
 

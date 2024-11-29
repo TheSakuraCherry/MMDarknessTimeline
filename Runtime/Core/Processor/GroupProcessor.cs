@@ -131,10 +131,12 @@ namespace MMDarkness
 
         protected virtual void OnReverseEnter(FrameData frameData, FrameData innerFrameData)
         {
+            OnEnter(frameData,innerFrameData);
         }
 
         protected virtual void OnReverse(FrameData frameData, FrameData innerFrameData)
         {
+            OnExit(frameData,innerFrameData);
         }
 
         protected virtual void OnReset()

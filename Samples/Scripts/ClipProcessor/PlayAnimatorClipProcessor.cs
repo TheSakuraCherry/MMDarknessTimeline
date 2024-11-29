@@ -30,6 +30,7 @@ namespace MMDarkness
             {
                 Debug.LogError("指定路径没有找到动画文件");
             }
+            playableGraph = PlayableGraph.Create("AnimationPlayableGraph");
         }
 
         protected override void OnEnter(FrameData frameData, FrameData innerFrameData)
@@ -37,8 +38,7 @@ namespace MMDarkness
             if(!animator || !animationClip)
                 return;
             // 创建 PlayableGraph
-            playableGraph = PlayableGraph.Create("AnimationPlayableGraph");
-            playableGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+            
 
             // 创建 AnimationClipPlayable 并设置动画剪辑
             clipPlayable = AnimationClipPlayable.Create(playableGraph, animationClip);
@@ -49,11 +49,22 @@ namespace MMDarkness
 
             // 播放 PlayableGraph
             playableGraph.Play();
+            clipPlayable.SetTime(0);
         }
 
         protected override void OnUpdate(FrameData frameData, FrameData innerFrameData)
         {
-            clipPlayable.SetTime(innerFrameData.currentTime);
+            if(clipPlayable.IsValid())
+                clipPlayable.SetTime(innerFrameData.currentTime);
+        }
+
+        protected override void OnExit(FrameData frameData, FrameData innerFrameData)
+        {
+            // 销毁 PlayableGraph 以释放资源
+            if (clipPlayable.IsValid())
+            {
+                clipPlayable.Destroy();
+            }
         }
     }
 }

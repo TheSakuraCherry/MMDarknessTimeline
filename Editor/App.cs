@@ -102,7 +102,10 @@ namespace MMDarkness.Editor
         public static void Stop(bool forceRewind)
         {
             if (GraphAsset)
+            {
                 Player.CurrentTime = 0;
+                Player.OnStop();
+            }
             EditorPlaybackState = EditorPlaybackState.Stopped;
             OnStop?.Invoke();
         }

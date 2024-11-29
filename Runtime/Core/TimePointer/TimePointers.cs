@@ -11,15 +11,18 @@ namespace MMDarkness
 {
     public interface IDirectableTimePointer
     {
+        bool triggered { get; }
         CFloat time { get; }
         void TriggerForward(CFloat currentTime, CFloat previousTime);
         void TriggerBackward(CFloat currentTime, CFloat previousTime);
         void Update(CFloat currentTime, CFloat previousTime);
+
+        void OnStop(CFloat currentTime, CFloat previousTime);
     }
 
     public struct StartTimePointer : IDirectableTimePointer
     {
-        private bool triggered;
+        public bool triggered { get; private set; }
         public IDirectable target { get; }
         CFloat IDirectableTimePointer.time => target.StartTime;
 
@@ -76,6 +79,8 @@ namespace MMDarkness
             }
         }
 
+        
+
         void IDirectableTimePointer.TriggerBackward(CFloat currentTime, CFloat previousTime)
         {
             if (currentTime < target.StartTime || currentTime <= 0)
@@ -97,11 +102,29 @@ namespace MMDarkness
                     target.Reverse(farmedata, innerframedata);
                 }
         }
+        void IDirectableTimePointer.OnStop(CFloat currentTime, CFloat previousTime)
+        {
+            var farmedata = new FrameData
+            {
+                currentTime = currentTime,
+                previousTime = previousTime,
+                deltaTime = CMath.Abs(currentTime - previousTime)
+            };
+            var localCurrentTime = CMath.Clamp(currentTime - target.StartTime, 0, target.Length);
+            var localPreviousTime = CMath.Clamp(previousTime - target.StartTime, 0, target.Length);
+            var innerframedata = new FrameData
+            {
+                previousTime = localPreviousTime, currentTime = localCurrentTime,
+                deltaTime = Mathf.Abs(localCurrentTime - localPreviousTime)
+            };
+            
+            target.Exit( farmedata, innerframedata);
+        }
     }
 
     public struct EndTimePointer : IDirectableTimePointer
     {
-        private bool triggered;
+        public bool triggered { get; private set; }
         public IDirectable target { get; }
         float IDirectableTimePointer.time => target.EndTime;
 
@@ -139,6 +162,11 @@ namespace MMDarkness
 
         void IDirectableTimePointer.Update(float currentTime, float previousTime)
         {
+        }
+
+        public void OnStop(CFloat currentTime, CFloat previousTime)
+        {
+            
         }
 
 
