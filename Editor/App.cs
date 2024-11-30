@@ -57,6 +57,12 @@ namespace MMDarkness.Editor
             SaveAsset();
         }
 
+        public static void SerlizeGraph()
+        {
+            if(GraphAsset)
+                GraphAsset.SerializeGraphModel();
+        }
+
         #endregion
 
         #region 播放相关

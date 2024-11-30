@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace MMDarkness
 {
-    [Name("播放动画")]
-    [Attachable(typeof(BTrack))]
+    [Name("播放特效")]
+    [Attachable(typeof(VFXTrack))]
     public class VFXClip : Clip
     {
         [ObjectPathSelector(typeof(ParticleSystem))]

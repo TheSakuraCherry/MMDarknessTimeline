@@ -140,9 +140,14 @@ namespace MMDarkness.Editor
                 $"<size=11>{string.Format(Lan.HeaderLastSaveTime, App.LastSaveTime.ToString("HH:mm:ss"))}</size>");
             GUI.color = Color.white;
 
+            
 
             if (GUILayout.Button(new GUIContent(Styles.SaveIcon, Lan.Save), EditorStyles.toolbarButton,
-                    GUILayout.Width(26))) App.AutoSave(); //先保存当前的
+                    GUILayout.Width(26))) 
+                {
+                    App.AutoSave(); //先保存当前的
+                    App.SerlizeGraph();//序列化
+                }
 
             if (GUILayout.Button(new GUIContent(Styles.SettingsIcon, Lan.OpenPreferencesTips),
                     EditorStyles.toolbarButton, GUILayout.Width(26)))

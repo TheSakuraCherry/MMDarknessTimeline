@@ -15,6 +15,11 @@ namespace MMDarkness.Editor
             base.Init();
             _processor = Processor as VFXClipProcessor;
             vfx = _processor.vfx;
+            vfx.randomSeed = 1;
+            foreach (var particle in vfx.GetComponentsInChildren<ParticleSystem>())
+            {
+                particle.randomSeed = 1;
+            }
         }
 
         public override void Enter(FrameData frameData, FrameData innerFrameData)
@@ -43,6 +48,11 @@ namespace MMDarkness.Editor
             if(!_processor.vfx)
                 return;
             vfx.gameObject.SetActive(false);
+        }
+        
+        public override void OnEditorStop(FrameData frameData, FrameData innerFrameData)
+        {
+            Object.DestroyImmediate(vfx.gameObject);
         }
     }
 }

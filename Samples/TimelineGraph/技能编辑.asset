@@ -1,0 +1,415 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7503662186954448789
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 3602639487409000238}
+  clipModel:
+    rid: 1188610111936921607
+  startTime: 0.5
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921607
+      type: {class: PlayAnimatorClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 0.5
+        length: 1.5
+        ClipPath: Assets/Plugins/MMDarknessTimeline/Samples/Res/Avatar_Female_Size02_Anbi_Ani_Attack_Normal_01.anim
+--- !u!114 &-7373999048857634091
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb2749d90b133472da797f5201e53720, type: 3}
+  m_Name: New Group
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
+  groupModel:
+    rid: 1188610139667300357
+  trackAssets:
+  - {fileID: 1844175602243796729}
+  - {fileID: 7547940938037763984}
+  isCollapsed: 0
+  active: 1
+  isLocked: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610139667300357
+      type: {class: Group, ns: MMDarkness, asm: MMDarknessTimeline.Runtime}
+      data:
+        tracks:
+        - clips:
+          - startTime: 0.32
+            length: 0.7399999
+        - clips:
+          - startTime: 0.45999998
+            length: 0.51
+--- !u!114 &-6249789515795312784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 7547940938037763984}
+  clipModel:
+    rid: 1188610139667300358
+  startTime: 0.45999998
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610139667300358
+      type: {class: VFXClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 0.45999998
+        length: 0.51
+        VFXPath: Assets/Plugins/MMDarknessTimeline/Samples/Res/Hovl Studio/Sword
+          slash VFX/Prefabs/Sword Slash 1.prefab
+        PositionOffset: {x: 0.372, y: 0.45, z: -0.336}
+        RotationOffset: {x: 0, y: 0, z: 180}
+--- !u!114 &-5336194287641479490
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11db1f7a654bb4e46a88b78e9959dbea, type: 3}
+  m_Name: BTrack
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 7866483197239879446}
+  trackModel:
+    rid: -2
+  clipAssets: []
+  active: 1
+  isLocked: 0
+  color: {r: 1, g: 1, b: 1, a: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &-4738509480283778598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 3602639487409000238}
+  clipModel:
+    rid: 1188610111936921606
+  startTime: 2.1000001
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921606
+      type: {class: InfoClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 2.1000001
+        length: 0
+        Info: 
+--- !u!114 &-1866274120020701845
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 3602639487409000238}
+  clipModel:
+    rid: 1188610111936921602
+  startTime: 0.8
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921602
+      type: {class: PlayAnimatorClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 0.8
+        length: 0
+        ClipPath: 
+--- !u!114 &-1060025194477166934
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 3602639487409000238}
+  clipModel:
+    rid: -2
+  startTime: 0.7
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a29e83d2d7624c45a871814f041acc6, type: 3}
+  m_Name: "\u6280\u80FD\u7F16\u8F91"
+  m_EditorClassIdentifier: 
+  length: 5
+  viewTimeMin: 0.077527314
+  viewTimeMax: 2.2921143
+  groupAssets:
+  - {fileID: -7373999048857634091}
+--- !u!114 &1351198577280663719
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11db1f7a654bb4e46a88b78e9959dbea, type: 3}
+  m_Name: ATrack
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 7866483197239879446}
+  trackModel:
+    rid: -2
+  clipAssets: []
+  active: 1
+  isLocked: 0
+  color: {r: 1, g: 1, b: 1, a: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &1844175602243796729
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11db1f7a654bb4e46a88b78e9959dbea, type: 3}
+  m_Name: AnimatorTrack
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: -7373999048857634091}
+  trackModel:
+    rid: 1188610139667300354
+  clipAssets:
+  - {fileID: 5453201935408330042}
+  active: 1
+  isLocked: 0
+  color: {r: 1, g: 1, b: 1, a: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610139667300354
+      type: {class: AnimatorTrack, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        clips:
+        - startTime: 0.32
+          length: 0.7399999
+--- !u!114 &3602639487409000238
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11db1f7a654bb4e46a88b78e9959dbea, type: 3}
+  m_Name: ATrack
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 7866483197239879446}
+  trackModel:
+    rid: -2
+  clipAssets:
+  - {fileID: -7503662186954448789}
+  active: 1
+  isLocked: 0
+  color: {r: 1, g: 1, b: 1, a: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &4729445739425638363
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb2749d90b133472da797f5201e53720, type: 3}
+  m_Name: New Group
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
+  groupModel:
+    rid: 1188610111936921603
+  trackAssets: []
+  isCollapsed: 0
+  active: 1
+  isLocked: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921603
+      type: {class: Group, ns: MMDarkness, asm: MMDarknessTimeline.Runtime}
+      data:
+        tracks: []
+--- !u!114 &5453201935408330042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 1844175602243796729}
+  clipModel:
+    rid: 1188610139667300356
+  startTime: 0.32
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610139667300356
+      type: {class: PlayAnimatorClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 0.32
+        length: 0.7399999
+        ClipPath: Assets/Plugins/MMDarknessTimeline/Samples/Res/Avatar_Female_Size02_Anbi_Ani_Attack_Normal_01.anim
+--- !u!114 &6479835395718205607
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45458daa91df64a43b385d625b46e760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 3602639487409000238}
+  clipModel:
+    rid: 1188610111936921605
+  startTime: 0.8
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921605
+      type: {class: InfoClip, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        startTime: 0.8
+        length: 1
+        Info: 
+--- !u!114 &7547940938037763984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11db1f7a654bb4e46a88b78e9959dbea, type: 3}
+  m_Name: VFXTrack
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: -7373999048857634091}
+  trackModel:
+    rid: 1188610139667300355
+  clipAssets:
+  - {fileID: -6249789515795312784}
+  active: 1
+  isLocked: 0
+  color: {r: 1, g: 1, b: 1, a: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610139667300355
+      type: {class: VFXTrack, ns: MMDarkness, asm: Assembly-CSharp-firstpass}
+      data:
+        clips:
+        - startTime: 0.45999998
+          length: 0.51
+--- !u!114 &7866483197239879446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb2749d90b133472da797f5201e53720, type: 3}
+  m_Name: New Group
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
+  groupModel:
+    rid: 1188610111936921604
+  trackAssets:
+  - {fileID: 3602639487409000238}
+  - {fileID: -5336194287641479490}
+  isCollapsed: 0
+  active: 1
+  isLocked: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 1188610111936921604
+      type: {class: Group, ns: MMDarkness, asm: MMDarknessTimeline.Runtime}
+      data:
+        tracks:
+        - clips:
+          - startTime: 0.5
+            length: 1.5

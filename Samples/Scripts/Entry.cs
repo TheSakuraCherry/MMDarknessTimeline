@@ -1,18 +1,23 @@
 using System;
 using MMDarkness;
+using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using UnityEditor;
 using UnityEngine;
+using SerializationUtility = Sirenix.Serialization.SerializationUtility;
 
 public class Entry : MonoBehaviour
 {
-    public TextAsset textAsset;
+    [ObjectPathSelector(typeof(TextAsset))]
+    public string textPath;
     public TimelineGraphProcessor Processor;
+    public GameObject Owner;
 
     public float time = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(textPath);
         // 获取字节数据
         byte[] data = textAsset.bytes;
 
@@ -20,12 +25,24 @@ public class Entry : MonoBehaviour
         TimelineGraph graph = SerializationUtility.DeserializeValue<TimelineGraph>(data, DataFormat.Binary);
 
         Processor = new TimelineGraphProcessor(graph);
-        //Processor.Play();
+
+        Processor.Owner = Owner;
+
     }
 
-    // public void Update()
-    // {
-    //     time += Time.deltaTime;
-    //     Processor.Sample(time);
-    // }
+    public void Update()
+    {
+        if (Processor.Active)
+        {
+            time += Time.deltaTime;
+            Processor.Sample(time);
+        }
+    }
+
+    [Button]
+    public void Play()
+    {
+        time = 0;
+        Processor.Play();
+    }
 }
