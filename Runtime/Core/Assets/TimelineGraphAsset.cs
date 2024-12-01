@@ -121,8 +121,7 @@ namespace MMDarkness
 
             return graphModel;
         }
-
-        [Button]
+        
         public void SerializeGraphModel()
         {
             var serializedData = SerializationUtility.SerializeValue(GetGraphModel(), DataFormat.Binary);

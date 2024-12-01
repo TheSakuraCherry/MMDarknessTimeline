@@ -287,7 +287,6 @@ namespace MMDarkness
             {
                 case StopMode.Exit:
                 {
-                    
                     foreach (var timePointer in m_timePointers)
                     {
                         if (timePointer.triggered)
