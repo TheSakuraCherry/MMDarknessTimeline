@@ -52,7 +52,8 @@ namespace MMDarkness.Editor
         
         public override void OnEditorStop(FrameData frameData, FrameData innerFrameData)
         {
-            Object.DestroyImmediate(vfx.gameObject);
+            if(vfx)
+                Object.DestroyImmediate(vfx.gameObject);
         }
     }
 }
