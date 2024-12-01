@@ -17,6 +17,7 @@ namespace MMDarkness
     [Description("特效轨道")]
     [Color(0.0f, 1f, 1f)]
     [Attachable(typeof(Group))]
+    [ShowIcon(typeof(ParticleSystem))]
     public class VFXTrack : Track
     {
     }

@@ -146,10 +146,10 @@ namespace MMDarkness.Editor.Draws
 
         private static Texture GetIcon(this TrackAsset trackAsset)
         {
-            var type = trackAsset.GetType();
+            var type = trackAsset.trackModel.GetType();
             if (_iconDictionary.TryGetValue(type, out var icon)) return icon;
 
-            var att = trackAsset.GetType().RTGetAttribute<ShowIconAttribute>(true);
+            var att = type.RTGetAttribute<ShowIconAttribute>(true);
 
             if (att != null)
             {
