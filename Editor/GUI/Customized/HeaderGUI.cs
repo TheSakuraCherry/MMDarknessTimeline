@@ -109,7 +109,7 @@ namespace MMDarkness.Editor
                     GUILayout.Width(26)))
             {
                 App.GraphAsset = null;
-                GUILayout.EndHorizontal();
+                //GUILayout.EndHorizontal();
                 return;
             }
 
