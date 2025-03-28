@@ -117,7 +117,7 @@ namespace MMDarkness
                 previousTime = localPreviousTime, currentTime = localCurrentTime,
                 deltaTime = Mathf.Abs(localCurrentTime - localPreviousTime)
             };
-            
+            triggered = false;
             target.Exit( farmedata, innerframedata);
         }
     }
@@ -166,7 +166,7 @@ namespace MMDarkness
 
         public void OnStop(CFloat currentTime, CFloat previousTime)
         {
-            
+            triggered = false;
         }
 
 
